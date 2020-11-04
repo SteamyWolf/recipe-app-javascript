@@ -51,7 +51,14 @@ header h1 {
     background-color: burlywood;
     padding: 15px;
 }
-.recipe p {
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+}
+.recipe-header p {
+    color: royalblue;
+}
+.recipe .description {
     margin-left: 10px;
 }
 .ingredient-list {
