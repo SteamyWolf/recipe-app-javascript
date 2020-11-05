@@ -3,18 +3,16 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 require('dotenv/config')
-
 const recipeRoute = require('./backend/routes/recipeRoute');
 const ingredientRoute = require('./backend/routes/ingredientRoute');
 
-const port = process.env.PORT || 3000
-
 // var corsOptions = {
-//     origin: 'https://wyatt-todo-app.netlify.app/',
+//     origin: 'http://localhost:3000',
 //     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 // }
 
-// app.use(cors(corsOptions));
+const port = process.env.PORT || 3000
+app.use(cors());
 
 //Middleware//
 app.use(express.urlencoded({ extended: true }));

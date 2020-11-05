@@ -28,11 +28,9 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.get('/ingredientsByRecipe', async (req, res) => {
-    console.log(req.body)
+router.get('/ingredientsByRecipe/:recipeID', async (req, res) => {
     try {
-        await Ingredient.find({ recipeID: req.body.recipeID })
-        // productByManufac.populate('products')
+        await Ingredient.find({ recipeID: req.params.recipeID })
         .exec((err, ingredients) => {
             res.json(ingredients)
         })

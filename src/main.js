@@ -1,56 +1,43 @@
-let recipes = [
-    {
-        title: 'Chicken Parmeseana',
-        directions: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident sequi quis, fuga repellendus quidem tempora maxime, necessitatibus harum quia numquam sed impedit, culpa officiis accusamus reprehenderit? Eaque sit aut non.',
-        rating: 5,
-        category: 'Chicken',
-        ingredients: [
-            {
-                name: 'Sugar',
-                amount: 3
-            },
-            {
-                name: 'Spice',
-                amount: 2
-            },
-            {
-                name: 'Chicken',
-                amount: 1
-            }, 
-            {
-                name: 'Cheese',
-                amount: 6
-            },
-            {
-                name: 'Pasta',
-                amount: 8
-            }
-        ],
-    },
-    {
-        title: 'Turkish Delight',
-        directions: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident sequi quis, fuga repellendus quidem tempora maxime, necessitatibus harum quia numquam sed impedit, culpa officiis accusamus reprehenderit? Eaque sit aut non.',
-        rating: 5,
-        category: 'Dessert',
-        ingredients: [
-            {
-                name: 'Sugar',
-                amount: 3
-            },
-            {
-                name: 'Shortening',
-                amount: 1
-            }, 
-            {
-                name: 'Strawberry Spread',
-                amount: 6
-            },
-            {
-                name: 'Powdered Sugar',
-                amount: 8
-            }
-        ],
-    }
-]
+const categoriesList = document.querySelector('.categories-list');
+const ulOfCategories = document.querySelector('.li-list-category');
 
-// function addCategory
+async function getRecipes() {
+    const response = await fetch('http://localhost:3000/recipes', {
+        method: 'GET',
+        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+    });
+    const recipes = response.json();
+    return recipes
+}
+
+
+getRecipes().then(recipes => {
+    console.log(recipes)
+    displayCategories(recipes)
+    let combined = recipes.map(recipe => {
+        fetch(`http://localhost:3000/ingredients/ingredientsByRecipe/${recipe._id}`, {
+            method: 'GET',
+            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+        })
+        .then(response => response.json())
+        .then(ingredients => {
+            recipe.ingredients.push(ingredients)
+        })
+        return recipe
+    })
+    console.log(combined)
+})
+
+function displayCategories(recipes) {
+    let finalCategories = [];
+    let categories = new Set(recipes.map(recipe => recipe.category))
+    console.log(categories)
+    categories.forEach(category => {
+        ulOfCategories.appendChild(createCategory(category))
+    })
+}
+function createCategory(category) {
+    let li = document.createElement('li')
+    li.textContent = category
+    return li
+}
