@@ -44,10 +44,12 @@ header h1 {
 
 /****** Recipes List ********/
 .recipes-list {
-    width: 700px;
+    /* REPEAT */
 }
 .recipe {
+    width: 700px;
     margin-left: 15px;
+    margin-bottom: 10px;
     background-color: burlywood;
     padding: 15px;
 }
