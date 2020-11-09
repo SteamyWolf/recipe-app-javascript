@@ -3,6 +3,8 @@ const ulOfCategories = document.querySelector('.li-list-category');
 const recipeListDiv = document.querySelector('.recipes-list');
 const allRecipes = document.querySelector('.allRecipes');
 
+let editing = false;
+
 async function getRecipes() {
     const response = await fetch('http://localhost:3000/recipes', {
         method: 'GET',
@@ -13,10 +15,10 @@ async function getRecipes() {
 }
 
 
-getRecipes().then(recipes => {
+getRecipes().then(async recipes => {
     console.log(recipes)
     
-    let recipesWithIngredients = recipes.map(recipe => {
+    let recipesWithIngredients = await recipes.map(recipe => {
         fetch(`http://localhost:3000/ingredients/ingredientsByRecipe/${recipe._id}`, {
             method: 'GET',
             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
@@ -27,9 +29,12 @@ getRecipes().then(recipes => {
         })
         return recipe
     })
+    // await recipesWithIngredients;
     console.log(recipesWithIngredients)
     displayCategories(recipesWithIngredients)
     allRecipesClick(recipesWithIngredients)
+    // editRecipes(recipesWithIngredients);
+    //additions go here
 })
 
 function displayCategories(recipesWithIngredients) {
@@ -47,12 +52,12 @@ function createCategory(category) {
     return li
 }
 
-//Event Listeners
+//EVENT LISTENERS
 function categoryClick(recipesWithIngredients) {
     const categoryItem = document.querySelectorAll('.category-item');
     categoryItem.forEach(category => {
         category.addEventListener('click', (event) => {
-            const indexOfElement = [...event.target.parentElement.children].indexOf(event.target)
+            // const indexOfElement = [...event.target.parentElement.children].indexOf(event.target)
             const categoryName = event.target.innerHTML
             displayRecipes(recipesWithIngredients, categoryName)
         })
@@ -66,21 +71,42 @@ function allRecipesClick(recipesWithIngredients) {
     })
 }
 
+function editRecipes(recipesWithIngredients) {
+    console.log(recipesWithIngredients)
+    const selectedRecipeH2 = document.querySelectorAll('.h2-recipe')
+    console.log(selectedRecipeH2)
+    selectedRecipeH2.forEach(recipeH2 => {
+        recipeH2.addEventListener('click', (event) => {
+            const h2Click = event.target.innerHTML
+            console.log(h2Click);
+        })
+    })
+    
+}
+//end
+
 
 
 function displayRecipes(recipesWithIngredients, categoryName) {
     while (recipeListDiv.firstChild) {
         recipeListDiv.removeChild(recipeListDiv.firstChild)
     }
-    recipesWithIngredients.forEach(recipe => {
-        if (recipe.category === categoryName) {
-            createRecipe(recipe)
-        }
-    })
+    //Called when a category is clicked that is not the 'ALL' category:
+    if (recipesWithIngredients.find(recipe => recipe.category.includes(categoryName))) {
+        recipesWithIngredients.forEach(recipe => {
+            if (recipe.category === categoryName) {
+                createRecipe(recipe)
+            }
+        })
+        editRecipes(recipesWithIngredients)
+    }
+    
+    //Called when allRecipes category is clicked:
     if (!categoryName) {
         recipesWithIngredients.forEach(recipe => {
             createRecipe(recipe)
         })
+        editRecipes(recipesWithIngredients)
     }
 }
 
@@ -91,6 +117,7 @@ function createRecipe(recipe) {
     let recipeHeaderDiv = document.createElement('div')
     recipeHeaderDiv.className = 'recipe-header';
     let h2 = document.createElement('h2');
+    h2.className = 'h2-recipe'
     let p = document.createElement('p');
     h2.textContent = recipe.title;
     p.textContent = 'Rating: ' + recipe.rating + '/5';
@@ -121,4 +148,10 @@ function createRecipe(recipe) {
     recipeDiv.appendChild(ingredientListDiv)
     
     recipeListDiv.appendChild(recipeDiv)
+    
 }
+
+// function editRecipes(event, recipesWithIngredients) {
+//     if (!editing) return;
+    
+// }
