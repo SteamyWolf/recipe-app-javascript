@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Recipe = require('../models/recipeModel');
 
+//Entered: /recipes
+
 //ROUTES//
 router.get('/', async (req, res) => {
     try {
@@ -27,6 +29,39 @@ router.post('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+    }
+});
+
+router.patch('/title', async (req, res) => {
+    console.log(req.body)
+    try {
+        const recipeUpdate = await Recipe.findOneAndUpdate({_id: req.body._id}, {$set: {title: req.body.title}});
+        res.json(recipeUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+});
+
+router.patch('/rating', async (req, res) => {
+    console.log(req.body)
+    try {
+        const recipeUpdate = await Recipe.findOneAndUpdate({_id: req.body._id}, {$set: {rating: req.body.rating}});
+        res.json(recipeUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+})
+
+router.patch('/directions', async (req, res) => {
+    console.log(req.body)
+    try {
+        const recipeUpdate = await Recipe.findOneAndUpdate({_id: req.body._id}, {$set: {directions: req.body.description}});
+        res.json(recipeUpdate)
+    }
+    catch(error) {
+        console.log(error);
     }
 })
 
