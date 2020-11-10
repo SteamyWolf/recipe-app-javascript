@@ -41,12 +41,34 @@ getRecipes().then(async recipes => {
     //additions go here
 })
 
+let categoryArray = [];
+
 function displayCategories(recipesWithIngredients) {
     let categories = new Set(recipesWithIngredients.map(recipe => recipe.category))
     console.log(categories)
     categories.forEach(category => {
+        categoryArray.push(category)
         ulOfCategories.appendChild(createCategory(category))
     });
+    fetch('http://localhost:3000/categories', {
+        method: 'GET',
+        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(categories => {
+        console.log(categoryArray)
+        console.log(categories)
+        let categoriesNotEqual = categoryArray.filter(category => category !== categories.forEach(category => category))
+        console.log(categoriesNotEqual)
+        categoriesNotEqual.forEach(category => {
+            fetch('http://localhost:3000/categories', {
+                method: 'POST',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                body: JSON.stringify({category: category})
+            })
+        })
+    })
+    
     categoryClick(recipesWithIngredients);
 }
 function createCategory(category) {

@@ -5,6 +5,7 @@ const cors = require('cors');
 require('dotenv/config')
 const recipeRoute = require('./backend/routes/recipeRoute');
 const ingredientRoute = require('./backend/routes/ingredientRoute');
+const categoryRoute = require('./backend/routes/categoryRoute');
 
 // var corsOptions = {
 //     origin: 'http://localhost:3000',
@@ -25,6 +26,7 @@ app.get('/hi', (req, res) => {
 
 app.use('/recipes', recipeRoute);
 app.use('/ingredients', ingredientRoute);
+app.use('/categories', categoryRoute);
 
 
 //CONNECTION TO DB
