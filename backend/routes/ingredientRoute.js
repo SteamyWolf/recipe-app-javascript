@@ -28,6 +28,28 @@ router.post('/', async (req, res) => {
     }
 })
 
+router.patch('/name', async (req, res) => {
+    console.log(req.body)
+    try {
+        const ingredientNameUpdate = await Ingredient.findOneAndUpdate({_id: req.body._id}, {$set: {name: req.body.name}});
+        res.json(ingredientNameUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+})
+
+router.patch('/amount', async (req, res) => {
+    console.log(req.body)
+    try {
+        const ingredientAmountUpdate = await Ingredient.findOneAndUpdate({_id: req.body._id}, {$set: {amount: req.body.amount}});
+        res.json(ingredientAmountUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+})
+
 router.get('/ingredientsByRecipe/:recipeID', async (req, res) => {
     try {
         await Ingredient.find({ recipeID: req.params.recipeID })

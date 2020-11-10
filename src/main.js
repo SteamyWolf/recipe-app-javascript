@@ -5,6 +5,11 @@ const allRecipes = document.querySelector('.allRecipes');
 
 let editing = false;
 
+const recipeFormLink = document.querySelector('.p-recipe-form')
+recipeFormLink.addEventListener('click', event => {
+    recipeFormLink.classList.add('active')
+})
+
 async function getRecipes() {
     const response = await fetch('http://localhost:3000/recipes', {
         method: 'GET',
@@ -33,7 +38,6 @@ getRecipes().then(async recipes => {
     console.log(recipesWithIngredients)
     displayCategories(recipesWithIngredients)
     allRecipesClick(recipesWithIngredients)
-    // editRecipes(recipesWithIngredients);
     //additions go here
 })
 
@@ -72,6 +76,7 @@ function allRecipesClick(recipesWithIngredients) {
 }
 
 function editRecipes(recipesWithIngredients) {
+    // const recipeID = document.appendChild.querySelector('.hidden-recipe-id')
     const selectedRecipe = document.querySelectorAll('.editable')
     console.log(selectedRecipe)
     selectedRecipe.forEach(recipeField => {
@@ -81,7 +86,7 @@ function editRecipes(recipesWithIngredients) {
             console.log(fieldText);
             console.log(event)
             console.log(event.target)
-            const id = event.target.parentElement.parentElement.children[3].innerHTML
+    
             // const indexOfElement = [...event.target.parentElement.parentElement.parentElement.children].indexOf(event.target.parentElement.parentElement)
             // console.log(indexOfElement)
             const indexOfTitle = event.target.parentElement.children[0]
@@ -90,15 +95,16 @@ function editRecipes(recipesWithIngredients) {
             console.log(indexOfTitle)
             console.log(indexOfRating)
             // console.log(indexOfDescription)
-            console.log(id)
             if (event.target === indexOfTitle) {
+                const id = event.target.parentElement.parentElement.children[3].innerHTML
                 fetch('http://localhost:3000/recipes/title', {
                     method: 'PATCH',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({_id: id, title: fieldText})
                 })
             } else if (event.target === indexOfRating) {
-                let ratingNumber = +fieldText[8]
+                const id = event.target.parentElement.parentElement.parentElement.children[3].innerHTML
+                let ratingNumber = +fieldText
                 //TODO: Fix this so that the user can only edit the number. It will probably be in the createRecipe function
                 fetch('http://localhost:3000/recipes/rating', {
                     method: 'PATCH',
@@ -124,10 +130,32 @@ function editRecipes(recipesWithIngredients) {
             })
         })
     })
-    const ingredients = document.querySelectorAll('.edit-ingredient');
-    ingredients.forEach(ingredient => {
-        ingredient.addEventListener('blur', event => {
+    const ingredientID = document.querySelector('.p-ingredient-id')
+
+    const titleIngredients = document.querySelectorAll('.edit-title-ingredient');
+    titleIngredients.forEach(titleIngredient => {
+        titleIngredient.contentEditable = true;
+        titleIngredient.addEventListener('blur', (event) => {
             console.log(event);
+            const ingredientTitleText = event.target.innerHTML
+            fetch('http://localhost:3000/ingredients/name', {
+                method: 'PATCH',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                body: JSON.stringify({_id: ingredientID.innerHTML, name: ingredientTitleText})
+            })
+        })
+    })
+    const amountIngredient = document.querySelectorAll('.edit-amount-ingredient');
+    amountIngredient.forEach(amountIngredient => {
+        amountIngredient.contentEditable = true;
+        amountIngredient.addEventListener('blur', (event) => {
+            console.log(event);
+            const ingredientAmountNumber = event.target.innerHTML
+            fetch('http://localhost:3000/ingredients/amount', {
+                method: 'PATCH',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                body: JSON.stringify({_id: ingredientID.innerHTML, amount: +ingredientAmountNumber})
+            })
         })
     })
 }
@@ -171,11 +199,23 @@ function createRecipe(recipe) {
     h2.classList.add('h2-recipe', 'editable');
     h2.textContent = recipe.title;
 
-    let p = document.createElement('p');
-    p.classList.add('editable')
-    p.textContent = 'Rating: ' + recipe.rating + '/5';
+    let ratingDiv = document.createElement('div')
+    ratingDiv.classList.add('rating-div')
+
+    let ratingFillerText = document.createElement('p');
+    ratingFillerText.textContent = 'Rating: '
+    let ratingEndFillerText = document.createElement('p')
+    ratingEndFillerText.textContent = '/5'
+
+    let pRatingNumber = document.createElement('p');
+    pRatingNumber.classList.add('editable')
+    pRatingNumber.textContent = recipe.rating
+
+    ratingDiv.appendChild(ratingFillerText)
+    ratingDiv.appendChild(pRatingNumber);
+    ratingDiv.appendChild(ratingEndFillerText)
     recipeHeaderDiv.appendChild(h2);
-    recipeHeaderDiv.appendChild(p);
+    recipeHeaderDiv.appendChild(ratingDiv)
 
     let pDescription = document.createElement('p')
     pDescription.classList.add('description');
@@ -194,15 +234,38 @@ function createRecipe(recipe) {
     recipe.ingredients[0].forEach(ingredient => {
         let liIngredient = document.createElement('li')
         liIngredient.classList.add('edit-ingredient')
-        liIngredient.textContent = ingredient.name + ' - ' + ingredient.amount
+        let pTitleIngredient = document.createElement('p')
+        pTitleIngredient.classList.add('edit-title-ingredient')
+        pTitleIngredient.textContent = ingredient.name
+
+        let fillerText = document.createElement('p')
+        fillerText.innerHTML = ' - '
+
+        let pAmountIngredient = document.createElement('p')
+        pAmountIngredient.classList.add('edit-amount-ingredient')
+        pAmountIngredient.textContent = ingredient.amount
+
+        //hidden ID for Ingredient
+        let pIngredientId = document.createElement('p')
+        pIngredientId.setAttribute('hidden', '')
+        pIngredientId.classList.add('p-ingredient-id')
+        pIngredientId.textContent = ingredient._id
+
+        liIngredient.appendChild(pTitleIngredient)
+        liIngredient.appendChild(fillerText)
+        liIngredient.appendChild(pAmountIngredient)
+        liIngredient.appendChild(pIngredientId)
         liListIngredientDiv.appendChild(liIngredient);
     })
     ingredientListDiv.appendChild(ingredientH3)
     ingredientListDiv.appendChild(liListIngredientDiv)
     recipeDiv.appendChild(ingredientListDiv)
 
-    //hidden ID
+    
+
+    //hidden ID for Recipe
     let hiddenId = document.createElement('p')
+    hiddenId.classList.add('hidden-recipe-id')
     hiddenId.setAttribute('hidden', '')
     hiddenId.innerHTML = recipe._id
     recipeDiv.appendChild(hiddenId)   
