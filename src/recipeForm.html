@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Form</title>
+    <link href="styles.css" rel="stylesheet">
+    <script defer src="recipeForm.js"></script>
+</head>
+<body>
+    <header>
+        <h1><a class="header-h1-a" href="/src/index.html">Recipes</a></h1>
+        <div class="links">
+            <a class="p-recipe-form" href="/src/recipeForm.html">Add New Recipes</a>
+            <a class="p-shopping-cart" href="#">Shopping Cart</a>
+        </div>
+    </header>
+    <div class="main-form">
+        <form class="form">
+            <label for="title">Recipe Title:</label><br>
+            <input type="text" id="title" name="title"><br>
+
+            <label for="directions">Recipe Directions:</label><br>
+            <textarea id="directions" name="directions"></textarea><br>
+
+            <label for="rating">Rating:</label>
+            <select id="rating"></select>
+
+            <label for="category">Category:</label>
+            <select id="category"></select>
+
+            <ul class="ingredient-add"></ul>
+            <button class="add-ingredient-button" type="button">Add Ingredient</button>
+
+            <button class="submit-button" type="submit">Submit</button>
+          </form>
+    </div>
+    
+</body>
+</html>
