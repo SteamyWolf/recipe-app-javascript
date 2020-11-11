@@ -58,15 +58,26 @@ function displayCategories(recipesWithIngredients) {
     .then(categories => {
         console.log(categoryArray)
         console.log(categories)
-        let categoriesNotEqual = categoryArray.filter(category => category !== categories.forEach(category => category))
-        console.log(categoriesNotEqual)
-        categoriesNotEqual.forEach(category => {
-            fetch('http://localhost:3000/categories', {
-                method: 'POST',
-                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-                body: JSON.stringify({category: category})
+        let DBCategory = []
+        categories.forEach(category => DBCategory.push(category.category))
+        console.log(DBCategory)
+        // let categoriesNotEqual = categoryArray.filter(category => category !== categories.forEach(DBcategory => DBcategory.category))
+        let filtered = categoryArray.filter(
+            function(e) {
+                return this.indexOf(e) < 0
+            },
+            DBCategory
+        )
+        console.log(filtered)
+        if (filtered.length > 0) {
+            filtered.forEach(category => {
+                fetch('http://localhost:3000/categories', {
+                    method: 'POST',
+                    headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({category: category})
+                })
             })
-        })
+        }
     })
     
     categoryClick(recipesWithIngredients);
