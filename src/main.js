@@ -38,6 +38,7 @@ getRecipes().then(async recipes => {
     console.log(recipesWithIngredients)
     displayCategories(recipesWithIngredients)
     allRecipesClick(recipesWithIngredients)
+    addNewCategory(recipesWithIngredients);
     //additions go here
 })
 
@@ -61,32 +62,63 @@ function displayCategories(recipesWithIngredients) {
         let DBCategory = []
         categories.forEach(category => DBCategory.push(category.category))
         console.log(DBCategory)
+        let differences = DBCategory.filter(category => !categoryArray.includes(category))
+        console.log(differences)
+        differences.forEach(filteredCategory => ulOfCategories.appendChild(createCategory(filteredCategory)))
+        categoryClick(recipesWithIngredients);
         // let categoriesNotEqual = categoryArray.filter(category => category !== categories.forEach(DBcategory => DBcategory.category))
-        let filtered = categoryArray.filter(
-            function(e) {
-                return this.indexOf(e) < 0
-            },
-            DBCategory
-        )
-        console.log(filtered)
-        if (filtered.length > 0) {
-            filtered.forEach(category => {
-                fetch('http://localhost:3000/categories', {
-                    method: 'POST',
-                    headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({category: category})
-                })
-            })
-        }
+        // let filtered = categoryArray.filter(
+        //     function(e) {
+        //         return this.indexOf(e) < 0
+        //     },
+        //     DBCategory
+        // )
+        // console.log(filtered)
+        // if (filtered.length > 0) {
+        //     filtered.forEach(category => {
+        //         ulOfCategories.appendChild(createCategory(category))
+        //         fetch('http://localhost:3000/categories', {
+        //             method: 'POST',
+        //             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+        //             body: JSON.stringify({category: category})
+        //         })
+        //     })
+        // }
     })
     
-    categoryClick(recipesWithIngredients);
 }
 function createCategory(category) {
     let li = document.createElement('li')
     li.className = 'category-item'
     li.textContent = category
     return li
+}
+
+function addNewCategory(recipesWithIngredients) {
+    let categoryInput = document.querySelector('.new-category-input');
+    const addCategoryDiv = document.querySelector('.add-category-div')
+    const button = document.createElement('button')
+    button.textContent = 'Add'
+    categoryInput.addEventListener('focus', event => {
+        categoryInput.value = '';
+        addCategoryDiv.appendChild(button)
+    })
+    button.addEventListener('mousedown', event => {
+        console.log(categoryInput.value)
+        // categoryArray.push(categoryInput.value)
+        // displayCategories(recipesWithIngredients)
+        ulOfCategories.appendChild(createCategory(categoryInput.value))
+        fetch('http://localhost:3000/categories', {
+            method: 'POST',
+            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+            body: JSON.stringify({category: categoryInput.value})
+        })
+        categoryClick(recipesWithIngredients)
+    })
+    categoryInput.addEventListener('blur', event => {
+        categoryInput.value = 'Add New'
+        addCategoryDiv.removeChild(button)
+    })
 }
 
 //EVENT LISTENERS
@@ -115,11 +147,10 @@ function editRecipes(recipesWithIngredients) {
     selectedRecipe.forEach(recipeField => {
         recipeField.contentEditable = true;
         recipeField.addEventListener('blur', (event) => {
-            const fieldText = event.target.innerHTML
+            let fieldText = event.target.innerHTML
             console.log(fieldText);
             console.log(event)
             console.log(event.target)
-    
             // const indexOfElement = [...event.target.parentElement.parentElement.parentElement.children].indexOf(event.target.parentElement.parentElement)
             // console.log(indexOfElement)
             const indexOfTitle = event.target.parentElement.children[0]
@@ -129,6 +160,7 @@ function editRecipes(recipesWithIngredients) {
             console.log(indexOfRating)
             // console.log(indexOfDescription)
             if (event.target === indexOfTitle) {
+                if (fieldText.length === 0) {fieldText = 'Click to edit me'}
                 const id = event.target.parentElement.parentElement.children[3].innerHTML
                 fetch('http://localhost:3000/recipes/title', {
                     method: 'PATCH',
@@ -136,6 +168,7 @@ function editRecipes(recipesWithIngredients) {
                     body: JSON.stringify({_id: id, title: fieldText})
                 })
             } else if (event.target === indexOfRating) {
+                if (fieldText.length === 0) {fieldText = 'Click to edit me'}
                 const id = event.target.parentElement.parentElement.parentElement.children[3].innerHTML
                 let ratingNumber = +fieldText
                 //TODO: Fix this so that the user can only edit the number. It will probably be in the createRecipe function
@@ -156,6 +189,7 @@ function editRecipes(recipesWithIngredients) {
             const descriptionText = event.target.innerHTML
             const id = event.target.parentElement.children[3].innerHTML;
             console.log(id, descriptionText)
+            if (descriptionText.length === 0) {descriptionText = 'Click to edit me'}
             fetch('http://localhost:3000/recipes/directions', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
@@ -171,6 +205,7 @@ function editRecipes(recipesWithIngredients) {
         titleIngredient.addEventListener('blur', (event) => {
             console.log(event);
             const ingredientTitleText = event.target.innerHTML
+            if (ingredientTitleText.length === 0) {ingredientTitleText = 'Click to edit me'}
             fetch('http://localhost:3000/ingredients/name', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
@@ -183,7 +218,10 @@ function editRecipes(recipesWithIngredients) {
         amountIngredient.contentEditable = true;
         amountIngredient.addEventListener('blur', (event) => {
             console.log(event);
-            const ingredientAmountNumber = event.target.innerHTML
+            let ingredientAmountNumber = event.target.innerHTML
+            if (parseInt(ingredientAmountNumber) > 5 || parseInt(ingredientAmountNumber) < 0 || ingredientAmountNumber.length === 0) {
+                ingredientAmountNumber = 0;
+            }
             fetch('http://localhost:3000/ingredients/amount', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
@@ -242,7 +280,12 @@ function createRecipe(recipe) {
 
     let pRatingNumber = document.createElement('p');
     pRatingNumber.classList.add('editable')
-    pRatingNumber.textContent = recipe.rating
+    if (recipe.rating === null || recipe.rating > 5 || recipe.rating < 0) {
+        pRatingNumber.textContent = 0
+    } else {
+        pRatingNumber.textContent = recipe.rating
+    }
+    
 
     ratingDiv.appendChild(ratingFillerText)
     ratingDiv.appendChild(pRatingNumber);
@@ -294,8 +337,6 @@ function createRecipe(recipe) {
     ingredientListDiv.appendChild(liListIngredientDiv)
     recipeDiv.appendChild(ingredientListDiv)
 
-    
-
     //hidden ID for Recipe
     let hiddenId = document.createElement('p')
     hiddenId.classList.add('hidden-recipe-id')
@@ -307,8 +348,3 @@ function createRecipe(recipe) {
     recipeListDiv.appendChild(recipeDiv)
     
 }
-
-// function editRecipes(event, recipesWithIngredients) {
-//     if (!editing) return;
-    
-// }
