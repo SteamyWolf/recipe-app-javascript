@@ -94,6 +94,7 @@ function createCategory(category) {
     return li
 }
 
+//ADD NEW
 function addNewCategory(recipesWithIngredients) {
     let categoryInput = document.querySelector('.new-category-input');
     const addCategoryDiv = document.querySelector('.add-category-div')
@@ -121,6 +122,79 @@ function addNewCategory(recipesWithIngredients) {
     })
 }
 
+function addNewIngredient(recipesWithIngredients) {
+    const showIngredientButtonAll = document.querySelectorAll('.show-ingredient-button');
+    showIngredientButtonAll.forEach(showIngredientButton => {
+        showIngredientButton.addEventListener('click', event => {
+            console.log(event)
+            console.log(event.target.parentElement)
+            const ingredientListDiv = event.target.parentElement
+            showIngredientButton.setAttribute('hidden', '');
+            let ingredientTitle = document.createElement('input')
+            let ingredientAmount = document.createElement('input')
+            let addNewIngredientButton = document.createElement('button')
+            ingredientTitle.classList.add('new-ingredient-title')
+            ingredientAmount.classList.add('new-ingredient-amount')
+            addNewIngredientButton.classList.add('add-new-ingredient-button')
+            addNewIngredientButton.textContent = 'Add New Ingredient'
+            ingredientTitle.setAttribute('type', 'text')
+            ingredientAmount.setAttribute('type', 'number')
+
+            ingredientListDiv.appendChild(ingredientTitle)
+            ingredientListDiv.appendChild(ingredientAmount)
+            ingredientListDiv.appendChild(addNewIngredientButton)
+
+            addNewIngredientButton.addEventListener('click', event => {
+                const id = event.target.parentElement.parentElement.children[3].innerHTML
+                console.log(id)
+                console.log(event)
+                let liListIngredient = event.target.parentElement.children[1]
+                if (ingredientTitle.value && ingredientAmount.value) {
+                    console.log(ingredientTitle.value, ingredientAmount.value)
+                    fetch('http://localhost:3000/ingredients', {
+                        method: 'POST',
+                        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({name: ingredientTitle.value, amount: ingredientAmount.value, recipeID: id})
+                    })
+                    .then(response => response.json())
+                    .then(savedIngredient => {
+                        console.log(savedIngredient)
+                        let ingredient = {
+                            title: savedIngredient.name,
+                            amount: savedIngredient.amount,
+                            recipeID: savedIngredient.recipeID,
+                            ingredientID: savedIngredient._id
+                        }
+                        addNewIngredientToDOM(ingredient, liListIngredient)
+                        // location.reload()
+                    })
+                }
+            })
+        })
+    })
+}
+//end
+function addNewIngredientToDOM(ingredient, liListIngredient) {
+    let li = document.createElement('li');
+    li.classList.add('edit-ingredient')
+    let pIngTitle = document.createElement('p')
+    pIngTitle.classList.add('edit-title-ingredient')
+    pIngTitle.textContent = ingredient.title
+    let fillerText = document.createElement('p')
+    fillerText.textContent = ' - '
+    let pIngAmount = document.createElement('p')
+    pIngAmount.classList.add('edit-amount-ingredient')
+    pIngAmount.textContent = ingredient.amount
+    li.appendChild(pIngTitle)
+    li.appendChild(fillerText)
+    li.appendChild(pIngAmount)
+    liListIngredient.appendChild(li)
+    editRecipes(ingredient.ingredientID);
+}
+
+
+
+
 //EVENT LISTENERS
 function categoryClick(recipesWithIngredients) {
     const categoryItem = document.querySelectorAll('.category-item');
@@ -140,7 +214,7 @@ function allRecipesClick(recipesWithIngredients) {
     })
 }
 
-function editRecipes(recipesWithIngredients) {
+function editRecipes(newIngredientID) {
     // const recipeID = document.appendChild.querySelector('.hidden-recipe-id')
     const selectedRecipe = document.querySelectorAll('.editable')
     console.log(selectedRecipe)
@@ -166,7 +240,7 @@ function editRecipes(recipesWithIngredients) {
                     method: 'PATCH',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({_id: id, title: fieldText})
-                })
+                }).then(console.log('Fetch Successful'))
             } else if (event.target === indexOfRating) {
                 if (fieldText.length === 0) {fieldText = 'Click to edit me'}
                 const id = event.target.parentElement.parentElement.parentElement.children[3].innerHTML
@@ -176,7 +250,7 @@ function editRecipes(recipesWithIngredients) {
                     method: 'PATCH',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({_id: id, rating: ratingNumber})
-                })
+                }).then(console.log('Fetch Successful'))
             }
             
         })
@@ -186,7 +260,7 @@ function editRecipes(recipesWithIngredients) {
         description.contentEditable = true;
         description.addEventListener('blur', (event) => {
             console.log(event)
-            const descriptionText = event.target.innerHTML
+            let descriptionText = event.target.innerHTML
             const id = event.target.parentElement.children[3].innerHTML;
             console.log(id, descriptionText)
             if (descriptionText.length === 0) {descriptionText = 'Click to edit me'}
@@ -194,23 +268,29 @@ function editRecipes(recipesWithIngredients) {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: id, description: descriptionText})
-            })
+            }).then(console.log('Fetch Successful'))
         })
     })
-    const ingredientID = document.querySelector('.p-ingredient-id')
+    // const ingredientID = document.querySelector('.p-ingredient-id')
 
     const titleIngredients = document.querySelectorAll('.edit-title-ingredient');
     titleIngredients.forEach(titleIngredient => {
         titleIngredient.contentEditable = true;
         titleIngredient.addEventListener('blur', (event) => {
             console.log(event);
+            let ingredientID;
+            if (newIngredientID) {
+                ingredientID = newIngredientID
+            } else {
+                ingredientID = event.target.parentElement.children[3].innerHTML
+            }
             const ingredientTitleText = event.target.innerHTML
             if (ingredientTitleText.length === 0) {ingredientTitleText = 'Click to edit me'}
             fetch('http://localhost:3000/ingredients/name', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-                body: JSON.stringify({_id: ingredientID.innerHTML, name: ingredientTitleText})
-            })
+                body: JSON.stringify({_id: ingredientID, name: ingredientTitleText})
+            }).then(console.log('Fetch Successful'))
         })
     })
     const amountIngredient = document.querySelectorAll('.edit-amount-ingredient');
@@ -218,15 +298,21 @@ function editRecipes(recipesWithIngredients) {
         amountIngredient.contentEditable = true;
         amountIngredient.addEventListener('blur', (event) => {
             console.log(event);
+            let ingredientID;
+            if (newIngredientID) {
+                ingredientID = newIngredientID
+            } else {
+                ingredientID = event.target.parentElement.children[3].innerHTML
+            }
             let ingredientAmountNumber = event.target.innerHTML
-            if (parseInt(ingredientAmountNumber) > 5 || parseInt(ingredientAmountNumber) < 0 || ingredientAmountNumber.length === 0) {
+            if (parseInt(ingredientAmountNumber) < 0 || ingredientAmountNumber.length === 0) {
                 ingredientAmountNumber = 0;
             }
             fetch('http://localhost:3000/ingredients/amount', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-                body: JSON.stringify({_id: ingredientID.innerHTML, amount: +ingredientAmountNumber})
-            })
+                body: JSON.stringify({_id: ingredientID, amount: +ingredientAmountNumber})
+            }).then(console.log('Fetch Successful'))
         })
     })
 }
@@ -245,7 +331,8 @@ function displayRecipes(recipesWithIngredients, categoryName) {
                 createRecipe(recipe)
             }
         })
-        editRecipes(recipesWithIngredients)
+        editRecipes('')
+        addNewIngredient(recipesWithIngredients)
     }
     
     //Called when allRecipes category is clicked:
@@ -253,7 +340,8 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         recipesWithIngredients.forEach(recipe => {
             createRecipe(recipe)
         })
-        editRecipes(recipesWithIngredients)
+        editRecipes('')
+        addNewIngredient(recipesWithIngredients)
     }
 }
 
@@ -333,8 +421,13 @@ function createRecipe(recipe) {
         liIngredient.appendChild(pIngredientId)
         liListIngredientDiv.appendChild(liIngredient);
     })
+    let showIngredientButton = document.createElement('button')
+    showIngredientButton.classList.add('show-ingredient-button')
+    showIngredientButton.textContent = 'Add Ingredient'
+    
     ingredientListDiv.appendChild(ingredientH3)
     ingredientListDiv.appendChild(liListIngredientDiv)
+    ingredientListDiv.appendChild(showIngredientButton)
     recipeDiv.appendChild(ingredientListDiv)
 
     //hidden ID for Recipe
