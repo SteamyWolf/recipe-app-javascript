@@ -65,5 +65,16 @@ router.patch('/directions', async (req, res) => {
     }
 })
 
+router.patch('/category', async (req, res) => {
+    console.log(req.body)
+    try {
+        const recipeUpdate = await Recipe.findOneAndUpdate({_id: req.body._id}, {$set: {category: req.body.category}});
+        res.json(recipeUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+})
+
 //EXPORT
 module.exports = router;

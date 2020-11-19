@@ -43,6 +43,7 @@ getRecipes().then(async recipes => {
 })
 
 let categoryArray = [];
+let globalDBCategory;
 
 function displayCategories(recipesWithIngredients) {
     let categories = new Set(recipesWithIngredients.map(recipe => recipe.category))
@@ -62,6 +63,7 @@ function displayCategories(recipesWithIngredients) {
         let DBCategory = []
         categories.forEach(category => DBCategory.push(category.category))
         console.log(DBCategory)
+        globalDBCategory = DBCategory
         let differences = DBCategory.filter(category => !categoryArray.includes(category))
         console.log(differences)
         differences.forEach(filteredCategory => ulOfCategories.appendChild(createCategory(filteredCategory)))
@@ -108,13 +110,14 @@ function addNewCategory(recipesWithIngredients) {
         console.log(categoryInput.value)
         // categoryArray.push(categoryInput.value)
         // displayCategories(recipesWithIngredients)
+        globalDBCategory.push(categoryInput.value)
         ulOfCategories.appendChild(createCategory(categoryInput.value))
         fetch('http://localhost:3000/categories', {
             method: 'POST',
             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
             body: JSON.stringify({category: categoryInput.value})
         })
-        categoryClick(recipesWithIngredients)
+        categoryClick(recipesWithIngredients, globalDBCategory)
     })
     categoryInput.addEventListener('blur', event => {
         categoryInput.value = 'Add New'
@@ -318,6 +321,22 @@ function editRecipes(newIngredientID) {
 }
 //end
 
+function changeCategorySelect() {
+    const categorySelectAll = document.querySelectorAll('.category-select')
+    categorySelectAll.forEach(categorySelect => {
+        categorySelect.addEventListener('change', event => {
+            console.log(event)
+            let category = event.target.value
+            let id = event.target.parentElement.parentElement.parentElement.children[3].innerHTML
+            fetch('http://localhost:3000/recipes/category', {
+                method: 'PATCH',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                body: JSON.stringify({_id: id, category: category})
+            })
+        })
+    })
+}
+
 
 
 function displayRecipes(recipesWithIngredients, categoryName) {
@@ -333,6 +352,7 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         })
         editRecipes('')
         addNewIngredient(recipesWithIngredients)
+        changeCategorySelect()
     }
     
     //Called when allRecipes category is clicked:
@@ -342,6 +362,7 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         })
         editRecipes('')
         addNewIngredient(recipesWithIngredients)
+        changeCategorySelect()
     }
 }
 
@@ -357,6 +378,22 @@ function createRecipe(recipe) {
     let h2 = document.createElement('h2');
     h2.classList.add('h2-recipe', 'editable');
     h2.textContent = recipe.title;
+
+
+
+    let categorySelectDiv = document.createElement('div')
+    let categorySelect = document.createElement('select')
+    categorySelect.classList.add('category-select')
+    let categories = globalDBCategory
+    categories.forEach(category => {
+        let option = document.createElement('option')
+        option.textContent = category
+        categorySelect.appendChild(option)
+    })
+    categorySelect.value = recipe.category
+    categorySelectDiv.appendChild(categorySelect);
+
+
 
     let ratingDiv = document.createElement('div')
     ratingDiv.classList.add('rating-div')
@@ -379,6 +416,7 @@ function createRecipe(recipe) {
     ratingDiv.appendChild(pRatingNumber);
     ratingDiv.appendChild(ratingEndFillerText)
     recipeHeaderDiv.appendChild(h2);
+    recipeHeaderDiv.appendChild(categorySelectDiv) //ADD THE SELECT DIV HERE
     recipeHeaderDiv.appendChild(ratingDiv)
 
     let pDescription = document.createElement('p')
