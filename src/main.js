@@ -68,24 +68,6 @@ function displayCategories(recipesWithIngredients) {
         console.log(differences)
         differences.forEach(filteredCategory => ulOfCategories.appendChild(createCategory(filteredCategory)))
         categoryClick(recipesWithIngredients);
-        // let categoriesNotEqual = categoryArray.filter(category => category !== categories.forEach(DBcategory => DBcategory.category))
-        // let filtered = categoryArray.filter(
-        //     function(e) {
-        //         return this.indexOf(e) < 0
-        //     },
-        //     DBCategory
-        // )
-        // console.log(filtered)
-        // if (filtered.length > 0) {
-        //     filtered.forEach(category => {
-        //         ulOfCategories.appendChild(createCategory(category))
-        //         fetch('http://localhost:3000/categories', {
-        //             method: 'POST',
-        //             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-        //             body: JSON.stringify({category: category})
-        //         })
-        //     })
-        // }
     })
     
 }
@@ -337,6 +319,34 @@ function changeCategorySelect() {
     })
 }
 
+function deleteIngredient() {
+    const editIngredientAll = document.querySelectorAll('.edit-ingredient')
+    editIngredientAll.forEach(editIngredient => {
+        editIngredient.addEventListener('mouseover', event => {
+            event.target.children[4].removeAttribute('hidden')
+        })
+    })
+    editIngredientAll.forEach(editIngredient => {
+        editIngredient.addEventListener('mouseleave', event => {
+            event.target.children[4].setAttribute('hidden', '')
+        })
+    })
+    const deleteIngredientButtonAll = document.querySelectorAll('.delete-ingredient-button');
+    deleteIngredientButtonAll.forEach(deleteIngredientButton => {
+        deleteIngredientButton.addEventListener('click', event => {
+            console.log(event)
+            let id = event.target.parentElement.children[3].innerHTML
+            let parentElement = event.target.parentElement.parentElement
+            let childElement = event.target.parentElement
+            parentElement.removeChild(childElement)
+            fetch('http://localhost:3000/ingredients/delete', {
+                method: 'DELETE',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                body: JSON.stringify({_id: id})
+            }).then(console.log('Fetch Successful'))
+        })
+    })
+}
 
 
 function displayRecipes(recipesWithIngredients, categoryName) {
@@ -353,6 +363,8 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         editRecipes('')
         addNewIngredient(recipesWithIngredients)
         changeCategorySelect()
+        deleteIngredient()
+        
     }
     
     //Called when allRecipes category is clicked:
@@ -363,6 +375,7 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         editRecipes('')
         addNewIngredient(recipesWithIngredients)
         changeCategorySelect()
+        deleteIngredient()
     }
 }
 
@@ -453,10 +466,16 @@ function createRecipe(recipe) {
         pIngredientId.classList.add('p-ingredient-id')
         pIngredientId.textContent = ingredient._id
 
+        let deleteIngredientButton = document.createElement('button')
+        deleteIngredientButton.textContent = 'X';
+        deleteIngredientButton.classList.add('delete-ingredient-button')
+        deleteIngredientButton.setAttribute('hidden', '');
+
         liIngredient.appendChild(pTitleIngredient)
         liIngredient.appendChild(fillerText)
         liIngredient.appendChild(pAmountIngredient)
         liIngredient.appendChild(pIngredientId)
+        liIngredient.appendChild(deleteIngredientButton)
         liListIngredientDiv.appendChild(liIngredient);
     })
     let showIngredientButton = document.createElement('button')
