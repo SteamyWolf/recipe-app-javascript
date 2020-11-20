@@ -3,9 +3,12 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 require('dotenv/config')
+
 const recipeRoute = require('./backend/routes/recipeRoute');
 const ingredientRoute = require('./backend/routes/ingredientRoute');
 const categoryRoute = require('./backend/routes/categoryRoute');
+const shoppingListRoute = require('./backend/routes/shoppingListRoute');
+const ingredientShoppingRoute = require('./backend/routes/ingredientShoppingRoute');
 
 // var corsOptions = {
 //     origin: 'http://localhost:3000',
@@ -27,6 +30,8 @@ app.get('/hi', (req, res) => {
 app.use('/recipes', recipeRoute);
 app.use('/ingredients', ingredientRoute);
 app.use('/categories', categoryRoute);
+app.use('/shopping', shoppingListRoute);
+app.use('/ingredientShopping', ingredientShoppingRoute);
 
 
 //CONNECTION TO DB

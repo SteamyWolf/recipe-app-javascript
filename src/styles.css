@@ -112,3 +112,41 @@ header-h1 {
     flex-direction: row;
     padding-left: 10px;
 }
+
+
+/****** Shopping List ********/
+.main-container {
+    width: 90%;
+    margin: 0 auto;
+}
+.add-shopping-list {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+.add-shopping-list-button {
+    width: 100px;
+    height: 30px;
+    background-color: blue;
+    color: white;
+    border-radius: 7px;
+}
+.all-shopping-lists {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.shopping-list {
+    width: 300px;
+    margin: 30px;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 15px;
+    background-color: burlywood;
+}
+.shopping-list h3 {
+    text-align: center;
+}
