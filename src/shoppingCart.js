@@ -27,7 +27,6 @@ getShoppingLists().then(async shoppingLists => {
     console.log(shoppingLists)
 
     let shoppingListsWithIngredients = await shoppingLists.map(async shoppingList => {
-        console.log(shoppingList)
         await fetch(`http://localhost:3000/ingredientShopping/ingredientsByShoppingList/${shoppingList._id}`, {
             method: 'GET',
             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
@@ -38,9 +37,7 @@ getShoppingLists().then(async shoppingLists => {
         })
         return shoppingList
     })
-    console.log(shoppingListsWithIngredients)
     Promise.all(shoppingListsWithIngredients).then(values => {
-        console.log(JSON.stringify(values))
         displayShoppingLists(values)
         addIngredient(values)
     })
@@ -51,23 +48,38 @@ function displayShoppingLists(shoppingListsWithIngredients) {
         console.log(list)
         let shoppingListDiv = document.createElement('div');
         shoppingListDiv.classList.add('shopping-list')
-        let shoppingListHTMl = `
-            <h3 class="shopping-list-title">${list.title}</h3>
-                <ul class="shopping-list-ingredient-list"></ul>
-            <button class="add-ingredient-button">Add Ingredient</button>
-            <p hidden>${list._id}</p>
-        `
-        shoppingListDiv.innerHTML = shoppingListHTMl
-        allShoppingLists.appendChild(shoppingListDiv)
-        let ulListIngredient = document.querySelector('.shopping-list-ingredient-list')
-        console.log(JSON.stringify(list.ingredients))
+        // let shoppingListHTMl = `
+        //     <h3 class="shopping-list-title">${list.title}</h3>
+        //     <ul class="shopping-list-ingredient-list"></ul>
+        //     <button class="add-ingredient-button">Add Ingredient</button>
+        //     <p hidden>${list._id}</p>
+        // `
+
+        let h3 = document.createElement('h3')
+        h3.classList.add('shopping-list-title')
+        h3.textContent = list.title
+        let ul = document.createElement('ul')
+        ul.classList.add('shopping-list-ingredient-list')
+        let button = document.createElement('button')
+        button.classList.add('add-ingredient-button')
+        button.textContent = 'Add Ingredient'
+        let pHidden = document.createElement('p')
+        pHidden.setAttribute('hidden', '')
+        pHidden.textContent = list._id
+
         if (list.ingredients[0] !== undefined) {
             list.ingredients[0].forEach(ingredient => {
-                console.log(ingredient)
                 let listIngredient = document.createElement('li')
                 listIngredient.textContent = `${ingredient.name} - ${ingredient.amount}`
-                ulListIngredient.appendChild(listIngredient)
+                ul.appendChild(listIngredient)
             })
+
+        shoppingListDiv.appendChild(h3)
+        shoppingListDiv.appendChild(ul)
+        shoppingListDiv.appendChild(button)
+        shoppingListDiv.appendChild(pHidden)
+        allShoppingLists.appendChild(shoppingListDiv)
+        
         }
     })
     
