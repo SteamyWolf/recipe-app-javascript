@@ -26,6 +26,18 @@ router.post('/', async (req, res) => {
     catch(err) {
         console.log(err)
     }
+});
+
+router.get('/ingredientsByShoppingList/:shoppingListID', async (req, res) => {
+    try {
+        await IngredientShopping.find({ shoppingListID: req.params.shoppingListID})
+            .exec((err, ingredients) => {
+                res.json(ingredients)
+            })
+    }
+    catch (err) {
+        res.json(err)
+    }
 })
 
 //EXPORT

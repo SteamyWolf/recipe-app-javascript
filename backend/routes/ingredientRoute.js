@@ -61,15 +61,6 @@ router.get('/ingredientsByRecipe/:recipeID', async (req, res) => {
     }
 });
 
-router.get('/ingredientsByShoppingList/:shoppingListID', async (req, res) => {
-    try {
-        await Ingredient.find({})
-    }
-    catch (err) {
-        res.json(err)
-    }
-})
-
 router.delete('/delete', async (req, res) => {
     try {
         let deletedIngredient = await Ingredient.findOneAndDelete({_id: req.body._id});
