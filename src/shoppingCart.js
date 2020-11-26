@@ -3,15 +3,16 @@ const allShoppingLists = document.querySelector('.all-shopping-lists');
 
 addListButton.addEventListener('click', addShoppingList);
 
-function addShoppingList() {
-    let shoppingListDiv = document.createElement('div')
-    shoppingListDiv.classList.add('shopping-list')
-    let shoppingList = `
-        <h3 class="shopping-title" contentEditable=true>Click to edit title</h3>
-        <button class="addIngredient">Add Ingredient</button>
-    `;
-    shoppingListDiv.innerHTML = shoppingList
-    allShoppingLists.appendChild(shoppingListDiv)
+async function addShoppingList() {
+    await fetch('http://localhost:3000/shopping', {
+        method: 'POST',
+        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+        body: JSON.stringify({title: 'Click Me to Edit Title'})
+    }).then(response => response.json())
+    .then(list => {
+        console.log(list)
+        displayShoppingLists(list)
+    })
 }
 
 async function getShoppingLists() {
@@ -44,45 +45,131 @@ getShoppingLists().then(async shoppingLists => {
 })
 
 function displayShoppingLists(shoppingListsWithIngredients) {
-    shoppingListsWithIngredients.forEach(list => {
-        console.log(list)
-        let shoppingListDiv = document.createElement('div');
-        shoppingListDiv.classList.add('shopping-list')
-        // let shoppingListHTMl = `
-        //     <h3 class="shopping-list-title">${list.title}</h3>
-        //     <ul class="shopping-list-ingredient-list"></ul>
-        //     <button class="add-ingredient-button">Add Ingredient</button>
-        //     <p hidden>${list._id}</p>
-        // `
-
-        let h3 = document.createElement('h3')
-        h3.classList.add('shopping-list-title')
-        h3.textContent = list.title
-        let ul = document.createElement('ul')
-        ul.classList.add('shopping-list-ingredient-list')
-        let button = document.createElement('button')
-        button.classList.add('add-ingredient-button')
-        button.textContent = 'Add Ingredient'
-        let pHidden = document.createElement('p')
-        pHidden.setAttribute('hidden', '')
-        pHidden.textContent = list._id
-
-        if (list.ingredients[0] !== undefined) {
-            list.ingredients[0].forEach(ingredient => {
-                let listIngredient = document.createElement('li')
-                listIngredient.textContent = `${ingredient.name} - ${ingredient.amount}`
-                ul.appendChild(listIngredient)
-            })
-
-        shoppingListDiv.appendChild(h3)
-        shoppingListDiv.appendChild(ul)
-        shoppingListDiv.appendChild(button)
-        shoppingListDiv.appendChild(pHidden)
-        allShoppingLists.appendChild(shoppingListDiv)
-        
-        }
-    })
+    if (Array.isArray(shoppingListsWithIngredients)) {
+        //called upon initialization
+        shoppingListsWithIngredients.forEach(list => {
+            console.log(list)
+            let shoppingListDiv = document.createElement('div');
+            shoppingListDiv.classList.add('shopping-list')
     
+            let h3 = document.createElement('h3')
+            h3.classList.add('shopping-list-title')
+            h3.textContent = list.title
+            h3.contentEditable = true;
+            h3.addEventListener('blur', event => {
+                fetch('http://localhost:3000/shopping/title', {
+                    method: 'PATCH',
+                    headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({_id: list._id, title: event.target.innerHTML})
+                })
+            })
+            let ul = document.createElement('ul')
+            ul.classList.add('shopping-list-ingredient-list')
+            let button = document.createElement('button')
+            button.classList.add('add-ingredient-button')
+            button.textContent = 'Add Ingredient'
+            let pHidden = document.createElement('p')
+            pHidden.setAttribute('hidden', '')
+            pHidden.textContent = list._id
+    
+            if (list.ingredients[0] !== undefined) {
+                list.ingredients[0].forEach(ingredient => {
+                    let listIngredient = document.createElement('li')
+                    let pTitle = document.createElement('p')
+                    pTitle.textContent = ingredient.name
+                    let dashText = document.createElement('p')
+                    dashText.textContent = ' - '
+                    let pAmount = document.createElement('p')
+                    pAmount.textContent = ingredient.amount
+                    pAmount.contentEditable = true;
+                    pAmount.addEventListener('blur', event => {
+                        console.log(event)
+                        fetch('http://localhost:3000/ingredientShopping/amount', {
+                            method: 'PATCH',
+                            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                            body: JSON.stringify({_id: ingredient._id, amount: +event.target.innerHTML})
+                        })
+                    })
+
+                    if (ingredient.complete === true) {
+                        pTitle.style.textDecoration = 'line-through'
+                        pAmount.style.textDecoration = 'line-through'
+                    }
+
+                    let completeButton = document.createElement('button')
+                    completeButton.textContent = 'Complete'
+                    completeButton.setAttribute('hidden', '')
+                    completeButton.addEventListener('click', event => {
+                        pTitle.style.textDecoration = 'line-through'
+                        pAmount.style.textDecoration = 'line-through'
+                        fetch('http://localhost:3000/ingredientShopping/complete', {
+                            method: 'PATCH',
+                            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                            body: JSON.stringify({_id: ingredient._id, complete: true})
+                        })
+                    })
+                    let deleteButton = document.createElement('button')
+                    deleteButton.textContent = 'Delete'
+                    deleteButton.setAttribute('hidden', '')
+
+                    listIngredient.addEventListener('mouseleave', event => {
+                        completeButton.setAttribute('hidden', '')
+                        deleteButton.setAttribute('hidden', '')
+                    })
+                    listIngredient.addEventListener('mouseenter', event => {
+                        completeButton.removeAttribute('hidden')
+                        deleteButton.removeAttribute('hidden')
+                    })
+                    
+                    listIngredient.appendChild(pTitle)
+                    listIngredient.appendChild(dashText)
+                    listIngredient.appendChild(pAmount)
+                    listIngredient.appendChild(completeButton)
+                    listIngredient.appendChild(deleteButton)
+                    ul.appendChild(listIngredient)
+                })
+
+                
+        
+                shoppingListDiv.appendChild(h3)
+                shoppingListDiv.appendChild(ul)
+                shoppingListDiv.appendChild(button)
+                shoppingListDiv.appendChild(pHidden)
+                allShoppingLists.appendChild(shoppingListDiv)
+            }
+        })
+    } else {
+        //Create a new List trggers this code:
+        let shoppingListDiv = document.createElement('div');
+            shoppingListDiv.classList.add('shopping-list')
+    
+            let h3 = document.createElement('h3')
+            h3.classList.add('shopping-list-title')
+            h3.textContent = shoppingListsWithIngredients.title
+            h3.contentEditable = true;
+            h3.addEventListener('blur', event => {
+                fetch('http://localhost:3000/shopping/title', {
+                    method: 'PATCH',
+                    headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({_id: shoppingListsWithIngredients._id, title: event.target.innerHTML})
+                })
+            })
+            let ul = document.createElement('ul')
+            ul.classList.add('shopping-list-ingredient-list')
+            let button = document.createElement('button')
+            button.classList.add('add-ingredient-button')
+            button.textContent = 'Add Ingredient'
+            let pHidden = document.createElement('p')
+            pHidden.setAttribute('hidden', '')
+            pHidden.textContent = shoppingListsWithIngredients._id
+    
+            shoppingListDiv.appendChild(h3)
+            shoppingListDiv.appendChild(ul)
+            shoppingListDiv.appendChild(button)
+            shoppingListDiv.appendChild(pHidden)
+            allShoppingLists.appendChild(shoppingListDiv)
+            addIngredient(shoppingListsWithIngredients)
+        }
 }
 
 function addIngredient(shoppingListsWithIngredients) {

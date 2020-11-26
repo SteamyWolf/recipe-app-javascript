@@ -18,6 +18,7 @@ router.post('/', async (req, res) => {
         const ingredient = new IngredientShopping({
             name: req.body.name,
             amount: req.body.amount,
+            complete: false,
             shoppingListID: req.body.shoppingListID
         })
         const saveIngredient = await ingredient.save();
@@ -38,7 +39,29 @@ router.get('/ingredientsByShoppingList/:shoppingListID', async (req, res) => {
     catch (err) {
         res.json(err)
     }
-})
+});
+
+router.patch('/amount', async (req, res) => {
+    console.log(req.body)
+    try {
+        const ingredientAmountUpdate = await IngredientShopping.findOneAndUpdate({_id: req.body._id}, {$set: {amount: req.body.amount}});
+        res.json(ingredientAmountUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+});
+
+router.patch('/complete', async (req, res) => {
+    console.log(req.body)
+    try {
+        const ingredientAmountUpdate = await IngredientShopping.findOneAndUpdate({_id: req.body._id}, {$set: {complete: req.body.complete}});
+        res.json(ingredientAmountUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+});
 
 //EXPORT
 module.exports = router;

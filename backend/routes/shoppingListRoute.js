@@ -29,5 +29,16 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.patch('/title', async (req, res) => {
+    console.log(req.body)
+    try {
+        const shoppingListUpdate = await ShoppingList.findOneAndUpdate({_id: req.body._id}, {$set: {title: req.body.title}});
+        res.json(shoppingListUpdate)
+    }
+    catch(error) {
+        console.log(error);
+    }
+});
+
 //EXPORT
 module.exports = router;

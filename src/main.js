@@ -34,12 +34,10 @@ getRecipes().then(async recipes => {
         })
         return recipe
     })
-    // await recipesWithIngredients;
     console.log(recipesWithIngredients)
     displayCategories(recipesWithIngredients)
     allRecipesClick(recipesWithIngredients)
     addNewCategory(recipesWithIngredients);
-    //additions go here
 })
 
 let categoryArray = [];
