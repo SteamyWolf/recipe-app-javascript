@@ -63,5 +63,15 @@ router.patch('/complete', async (req, res) => {
     }
 });
 
+router.delete('/delete', async (req, res) => {
+    try {
+        let deletedIngredient = await IngredientShopping.findOneAndDelete({_id: req.body._id});
+        res.json(deletedIngredient);
+    }
+    catch(err) {
+        console.log(err)
+    }
+})
+
 //EXPORT
 module.exports = router;

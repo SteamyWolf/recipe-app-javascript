@@ -120,6 +120,15 @@ function displayShoppingLists(shoppingListsWithIngredients) {
                         completeButton.removeAttribute('hidden')
                         deleteButton.removeAttribute('hidden')
                     })
+                    deleteButton.addEventListener('click', event => {
+                        console.log(event)
+                        ul.removeChild(event.target.parentElement)
+                        fetch('http://localhost:3000/ingredientShopping/delete', {
+                            method: 'DELETE',
+                            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                            body: JSON.stringify({_id: ingredient._id})
+                        }).then(console.log('deletion success'))
+                    })
                     
                     listIngredient.appendChild(pTitle)
                     listIngredient.appendChild(dashText)
