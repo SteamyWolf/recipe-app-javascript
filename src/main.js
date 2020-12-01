@@ -317,6 +317,59 @@ function changeCategorySelect() {
     })
 }
 
+async function sendToShoppingListSelect() {
+    const response = await fetch('http://localhost:3000/shopping', {
+        method: 'GET',
+        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+    })
+    const shoppingResponse = response.json();
+    shoppingResponse.then(shoppingLists => {
+        console.log(shoppingLists)
+        const shoppingSelectAll = document.querySelectorAll('.recipe-shopping-select')
+        shoppingSelectAll.forEach(shoppingSelect => {
+            shoppingLists.forEach(list => {
+                let option = document.createElement('option')
+                option.textContent = list.title
+                option.setAttribute('data-id', list._id)
+                shoppingSelect.appendChild(option)
+            })
+        })
+        const shoppingButtonAll = document.querySelectorAll('.recipe-shopping-button')
+        shoppingButtonAll.forEach(shoppingButton => {
+            shoppingButton.addEventListener('click', event => {
+                console.log(event)
+                let value = event.target.parentElement.children[0].value
+                console.log(value)
+
+                let valueOfOneIngredient = event.target.parentElement.parentElement.children[2].children[1].children[0].children[0].innerHTML
+                console.log(valueOfOneIngredient)
+
+                let shoppingListOptions = Array.from(event.target.parentElement.children[0].children)
+                console.log(shoppingListOptions)
+                let shoppingListId = '';
+                shoppingListOptions.forEach(option => {
+                    if (option.value === value) {
+                        shoppingListId = option.getAttribute('data-id')
+                    }
+                })
+                console.log(shoppingListId)
+
+                let ingredientsLiArray = Array.from(event.target.parentElement.parentElement.children[2].children[1].children)
+                console.log(ingredientsLiArray)
+                ingredientsLiArray.forEach(ingLI => {
+                    let name = ingLI.children[0].innerHTML
+                    let amount = ingLI.children[2].innerHTML
+                    fetch('http://localhost:3000/ingredientShopping', {
+                        method: 'POST',
+                        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({name: name, amount: +amount, shoppingListID: shoppingListId})
+                    }).then(console.log('success'))
+                })
+            })
+        })
+    })
+}
+
 function deleteIngredient() {
     const editIngredientAll = document.querySelectorAll('.edit-ingredient')
     editIngredientAll.forEach(editIngredient => {
@@ -362,6 +415,7 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         addNewIngredient(recipesWithIngredients)
         changeCategorySelect()
         deleteIngredient()
+        sendToShoppingListSelect()
         
     }
     
@@ -374,6 +428,7 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         addNewIngredient(recipesWithIngredients)
         changeCategorySelect()
         deleteIngredient()
+        // sendToShoppingListSelect()
     }
 }
 
@@ -390,8 +445,6 @@ function createRecipe(recipe) {
     h2.classList.add('h2-recipe', 'editable');
     h2.textContent = recipe.title;
 
-
-
     let categorySelectDiv = document.createElement('div')
     let categorySelect = document.createElement('select')
     categorySelect.classList.add('category-select')
@@ -403,8 +456,6 @@ function createRecipe(recipe) {
     })
     categorySelect.value = recipe.category
     categorySelectDiv.appendChild(categorySelect);
-
-
 
     let ratingDiv = document.createElement('div')
     ratingDiv.classList.add('rating-div')
@@ -491,6 +542,18 @@ function createRecipe(recipe) {
     hiddenId.setAttribute('hidden', '')
     hiddenId.innerHTML = recipe._id
     recipeDiv.appendChild(hiddenId)   
+
+    //send to shoppingList:
+    let shoppingDiv = document.createElement('div')
+    shoppingDiv.classList.add('recipe-shopping-div')
+    let shoppingButton = document.createElement('button')
+    shoppingButton.classList.add('recipe-shopping-button')
+    shoppingButton.textContent = 'Send Ingredients to Shopping List'
+    let shoppingSelect = document.createElement('select')
+    shoppingSelect.classList.add('recipe-shopping-select')
+    shoppingDiv.appendChild(shoppingSelect)
+    shoppingDiv.appendChild(shoppingButton)
+    recipeDiv.appendChild(shoppingDiv)
     
     //last append to main div
     recipeListDiv.appendChild(recipeDiv)
