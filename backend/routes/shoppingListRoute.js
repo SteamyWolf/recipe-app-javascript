@@ -30,7 +30,6 @@ router.post('/', async (req, res) => {
 });
 
 router.patch('/title', async (req, res) => {
-    console.log(req.body)
     try {
         const shoppingListUpdate = await ShoppingList.findOneAndUpdate({_id: req.body._id}, {$set: {title: req.body.title}});
         res.json(shoppingListUpdate)
@@ -39,6 +38,16 @@ router.patch('/title', async (req, res) => {
         console.log(error);
     }
 });
+
+router.delete('/delete', async (req, res) => {
+    try {
+        let deletedShoppingList = await ShoppingList.findOneAndDelete({_id: req.body._id});
+        res.json(deletedShoppingList);
+    }
+    catch(err) {
+        console.log(err)
+    }
+})
 
 //EXPORT
 module.exports = router;

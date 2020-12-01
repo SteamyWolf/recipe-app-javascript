@@ -26,7 +26,6 @@ async function getShoppingLists() {
 
 getShoppingLists().then(async shoppingLists => {
     console.log(shoppingLists)
-
     let shoppingListsWithIngredients = await shoppingLists.map(async shoppingList => {
         await fetch(`http://localhost:3000/ingredientShopping/ingredientsByShoppingList/${shoppingList._id}`, {
             method: 'GET',
@@ -41,6 +40,7 @@ getShoppingLists().then(async shoppingLists => {
     Promise.all(shoppingListsWithIngredients).then(values => {
         displayShoppingLists(values)
         addIngredient(values)
+        deleteShoppingList()
     })
 })
 
@@ -90,12 +90,10 @@ function displayShoppingLists(shoppingListsWithIngredients) {
                             body: JSON.stringify({_id: ingredient._id, amount: +event.target.innerHTML})
                         })
                     })
-
                     if (ingredient.complete === true) {
                         pTitle.style.textDecoration = 'line-through'
                         pAmount.style.textDecoration = 'line-through'
                     }
-
                     let completeButton = document.createElement('button')
                     completeButton.textContent = 'Complete'
                     completeButton.setAttribute('hidden', '')
@@ -136,11 +134,7 @@ function displayShoppingLists(shoppingListsWithIngredients) {
                     listIngredient.appendChild(completeButton)
                     listIngredient.appendChild(deleteButton)
                     ul.appendChild(listIngredient)
-                })
-
-                
-        
-                
+                }) 
             }
             shoppingListDiv.appendChild(h3)
             shoppingListDiv.appendChild(ul)
@@ -149,36 +143,6 @@ function displayShoppingLists(shoppingListsWithIngredients) {
             allShoppingLists.appendChild(shoppingListDiv)
         })
     } else {
-        //Create a new List trggers this code:
-        // let shoppingListDiv = document.createElement('div');
-        //     shoppingListDiv.classList.add('shopping-list')
-    
-        //     let h3 = document.createElement('h3')
-        //     h3.classList.add('shopping-list-title')
-        //     h3.textContent = shoppingListsWithIngredients.title
-        //     h3.contentEditable = true;
-        //     h3.addEventListener('blur', event => {
-        //         fetch('http://localhost:3000/shopping/title', {
-        //             method: 'PATCH',
-        //             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-        //             body: JSON.stringify({_id: shoppingListsWithIngredients._id, title: event.target.innerHTML})
-        //         })
-        //     })
-        //     let ul = document.createElement('ul')
-        //     ul.classList.add('shopping-list-ingredient-list')
-        //     let button = document.createElement('button')
-        //     button.classList.add('add-ingredient-button')
-        //     button.textContent = 'Add Ingredient'
-        //     let pHidden = document.createElement('p')
-        //     pHidden.setAttribute('hidden', '')
-        //     pHidden.textContent = shoppingListsWithIngredients._id
-    
-        //     shoppingListDiv.appendChild(h3)
-        //     shoppingListDiv.appendChild(ul)
-        //     shoppingListDiv.appendChild(button)
-        //     shoppingListDiv.appendChild(pHidden)
-        //     allShoppingLists.appendChild(shoppingListDiv)
-        //     addIngredient(shoppingListsWithIngredients)
         let shoppingListDiv = document.createElement('div');
             shoppingListDiv.classList.add('shopping-list')
     
@@ -202,72 +166,6 @@ function displayShoppingLists(shoppingListsWithIngredients) {
             pHidden.setAttribute('hidden', '')
             pHidden.textContent = shoppingListsWithIngredients._id
     
-            // if (shoppingListsWithIngredients.ingredients[0] !== undefined) {
-            //     shoppingListsWithIngredients.ingredients[0].forEach(ingredient => {
-            //         let listIngredient = document.createElement('li')
-            //         let pTitle = document.createElement('p')
-            //         pTitle.textContent = ingredient.name
-            //         let dashText = document.createElement('p')
-            //         dashText.textContent = ' - '
-            //         let pAmount = document.createElement('p')
-            //         pAmount.textContent = ingredient.amount
-            //         pAmount.contentEditable = true;
-            //         pAmount.addEventListener('blur', event => {
-            //             console.log(event)
-            //             fetch('http://localhost:3000/ingredientShopping/amount', {
-            //                 method: 'PATCH',
-            //                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-            //                 body: JSON.stringify({_id: ingredient._id, amount: +event.target.innerHTML})
-            //             })
-            //         })
-
-            //         if (ingredient.complete === true) {
-            //             pTitle.style.textDecoration = 'line-through'
-            //             pAmount.style.textDecoration = 'line-through'
-            //         }
-
-            //         let completeButton = document.createElement('button')
-            //         completeButton.textContent = 'Complete'
-            //         completeButton.setAttribute('hidden', '')
-            //         completeButton.addEventListener('click', event => {
-            //             pTitle.style.textDecoration = 'line-through'
-            //             pAmount.style.textDecoration = 'line-through'
-            //             fetch('http://localhost:3000/ingredientShopping/complete', {
-            //                 method: 'PATCH',
-            //                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-            //                 body: JSON.stringify({_id: ingredient._id, complete: true})
-            //             })
-            //         })
-            //         let deleteButton = document.createElement('button')
-            //         deleteButton.textContent = 'Delete'
-            //         deleteButton.setAttribute('hidden', '')
-
-            //         listIngredient.addEventListener('mouseleave', event => {
-            //             completeButton.setAttribute('hidden', '')
-            //             deleteButton.setAttribute('hidden', '')
-            //         })
-            //         listIngredient.addEventListener('mouseenter', event => {
-            //             completeButton.removeAttribute('hidden')
-            //             deleteButton.removeAttribute('hidden')
-            //         })
-            //         deleteButton.addEventListener('click', event => {
-            //             console.log(event)
-            //             ul.removeChild(event.target.parentElement)
-            //             fetch('http://localhost:3000/ingredientShopping/delete', {
-            //                 method: 'DELETE',
-            //                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-            //                 body: JSON.stringify({_id: ingredient._id})
-            //             }).then(console.log('deletion success'))
-            //         })
-                    
-            //         listIngredient.appendChild(pTitle)
-            //         listIngredient.appendChild(dashText)
-            //         listIngredient.appendChild(pAmount)
-            //         listIngredient.appendChild(completeButton)
-            //         listIngredient.appendChild(deleteButton)
-            //         ul.appendChild(listIngredient)
-            //     })
-            // }
             shoppingListDiv.appendChild(h3)
             shoppingListDiv.appendChild(ul)
             shoppingListDiv.appendChild(button)
@@ -348,6 +246,35 @@ function addIngredient(shoppingListsWithIngredients) {
             shoppingListDiv.appendChild(titleInput)
             shoppingListDiv.appendChild(amountInput)
             shoppingListDiv.appendChild(addButton)
+        })
+    })
+}
+
+function deleteShoppingList() {
+    const shoppingListAll = document.querySelectorAll('.shopping-list')
+    shoppingListAll.forEach(shoppingList => {
+        let hoverButton = document.createElement('button')
+        hoverButton.textContent = 'X'
+        hoverButton.classList.add('hover-delete-button')
+        hoverButton.setAttribute('hidden', '');
+        hoverButton.addEventListener('click', event => {
+            console.log(event)
+            let id = event.target.parentElement.children[3].innerHTML
+            event.target.parentElement.parentElement.removeChild(event.target.parentElement)
+            fetch('http://localhost:3000/shopping/delete', {
+                method: 'DELETE',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                body: JSON.stringify({_id: id})
+            }).then(console.log('deletion success'))
+        })
+        shoppingList.appendChild(hoverButton)
+        shoppingList.addEventListener('mouseenter', event => {
+            console.log(event)
+            // event.target.parentElement.removeChild(event.target) //will remove... works!
+            hoverButton.removeAttribute('hidden')
+        })
+        shoppingList.addEventListener('mouseleave', event => {
+            hoverButton.setAttribute('hidden', '')
         })
     })
 }
