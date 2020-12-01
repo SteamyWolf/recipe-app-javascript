@@ -140,15 +140,45 @@ function displayShoppingLists(shoppingListsWithIngredients) {
 
                 
         
-                shoppingListDiv.appendChild(h3)
-                shoppingListDiv.appendChild(ul)
-                shoppingListDiv.appendChild(button)
-                shoppingListDiv.appendChild(pHidden)
-                allShoppingLists.appendChild(shoppingListDiv)
+                
             }
+            shoppingListDiv.appendChild(h3)
+            shoppingListDiv.appendChild(ul)
+            shoppingListDiv.appendChild(button)
+            shoppingListDiv.appendChild(pHidden)
+            allShoppingLists.appendChild(shoppingListDiv)
         })
     } else {
         //Create a new List trggers this code:
+        // let shoppingListDiv = document.createElement('div');
+        //     shoppingListDiv.classList.add('shopping-list')
+    
+        //     let h3 = document.createElement('h3')
+        //     h3.classList.add('shopping-list-title')
+        //     h3.textContent = shoppingListsWithIngredients.title
+        //     h3.contentEditable = true;
+        //     h3.addEventListener('blur', event => {
+        //         fetch('http://localhost:3000/shopping/title', {
+        //             method: 'PATCH',
+        //             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+        //             body: JSON.stringify({_id: shoppingListsWithIngredients._id, title: event.target.innerHTML})
+        //         })
+        //     })
+        //     let ul = document.createElement('ul')
+        //     ul.classList.add('shopping-list-ingredient-list')
+        //     let button = document.createElement('button')
+        //     button.classList.add('add-ingredient-button')
+        //     button.textContent = 'Add Ingredient'
+        //     let pHidden = document.createElement('p')
+        //     pHidden.setAttribute('hidden', '')
+        //     pHidden.textContent = shoppingListsWithIngredients._id
+    
+        //     shoppingListDiv.appendChild(h3)
+        //     shoppingListDiv.appendChild(ul)
+        //     shoppingListDiv.appendChild(button)
+        //     shoppingListDiv.appendChild(pHidden)
+        //     allShoppingLists.appendChild(shoppingListDiv)
+        //     addIngredient(shoppingListsWithIngredients)
         let shoppingListDiv = document.createElement('div');
             shoppingListDiv.classList.add('shopping-list')
     
@@ -172,13 +202,79 @@ function displayShoppingLists(shoppingListsWithIngredients) {
             pHidden.setAttribute('hidden', '')
             pHidden.textContent = shoppingListsWithIngredients._id
     
+            // if (shoppingListsWithIngredients.ingredients[0] !== undefined) {
+            //     shoppingListsWithIngredients.ingredients[0].forEach(ingredient => {
+            //         let listIngredient = document.createElement('li')
+            //         let pTitle = document.createElement('p')
+            //         pTitle.textContent = ingredient.name
+            //         let dashText = document.createElement('p')
+            //         dashText.textContent = ' - '
+            //         let pAmount = document.createElement('p')
+            //         pAmount.textContent = ingredient.amount
+            //         pAmount.contentEditable = true;
+            //         pAmount.addEventListener('blur', event => {
+            //             console.log(event)
+            //             fetch('http://localhost:3000/ingredientShopping/amount', {
+            //                 method: 'PATCH',
+            //                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+            //                 body: JSON.stringify({_id: ingredient._id, amount: +event.target.innerHTML})
+            //             })
+            //         })
+
+            //         if (ingredient.complete === true) {
+            //             pTitle.style.textDecoration = 'line-through'
+            //             pAmount.style.textDecoration = 'line-through'
+            //         }
+
+            //         let completeButton = document.createElement('button')
+            //         completeButton.textContent = 'Complete'
+            //         completeButton.setAttribute('hidden', '')
+            //         completeButton.addEventListener('click', event => {
+            //             pTitle.style.textDecoration = 'line-through'
+            //             pAmount.style.textDecoration = 'line-through'
+            //             fetch('http://localhost:3000/ingredientShopping/complete', {
+            //                 method: 'PATCH',
+            //                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+            //                 body: JSON.stringify({_id: ingredient._id, complete: true})
+            //             })
+            //         })
+            //         let deleteButton = document.createElement('button')
+            //         deleteButton.textContent = 'Delete'
+            //         deleteButton.setAttribute('hidden', '')
+
+            //         listIngredient.addEventListener('mouseleave', event => {
+            //             completeButton.setAttribute('hidden', '')
+            //             deleteButton.setAttribute('hidden', '')
+            //         })
+            //         listIngredient.addEventListener('mouseenter', event => {
+            //             completeButton.removeAttribute('hidden')
+            //             deleteButton.removeAttribute('hidden')
+            //         })
+            //         deleteButton.addEventListener('click', event => {
+            //             console.log(event)
+            //             ul.removeChild(event.target.parentElement)
+            //             fetch('http://localhost:3000/ingredientShopping/delete', {
+            //                 method: 'DELETE',
+            //                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+            //                 body: JSON.stringify({_id: ingredient._id})
+            //             }).then(console.log('deletion success'))
+            //         })
+                    
+            //         listIngredient.appendChild(pTitle)
+            //         listIngredient.appendChild(dashText)
+            //         listIngredient.appendChild(pAmount)
+            //         listIngredient.appendChild(completeButton)
+            //         listIngredient.appendChild(deleteButton)
+            //         ul.appendChild(listIngredient)
+            //     })
+            // }
             shoppingListDiv.appendChild(h3)
             shoppingListDiv.appendChild(ul)
             shoppingListDiv.appendChild(button)
             shoppingListDiv.appendChild(pHidden)
             allShoppingLists.appendChild(shoppingListDiv)
-            addIngredient(shoppingListsWithIngredients)
         }
+        addIngredient(shoppingListsWithIngredients)
 }
 
 function addIngredient(shoppingListsWithIngredients) {
@@ -205,10 +301,49 @@ function addIngredient(shoppingListsWithIngredients) {
                     method: 'POST',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({name: titleInput.value, amount: +amountInput.value, shoppingListID: id})
+                }).then(response => response.json())
+                .then(addedIngredient => {
+                    console.log(addedIngredient)
+                    titleInput.value = '';
+                    amountInput.value = '';
+
+                    let listIngredient = [...event.target.parentElement.children[1].children]
+                    console.log(listIngredient)
+                    listIngredient.forEach(ingredientLI => {
+                    console.log(ingredientLI)
+                    let deleteButton = document.createElement('button')
+                    deleteButton.textContent = 'Delete'
+                    deleteButton.setAttribute('hidden', '')
+
+                    if (!ingredientLI.innerHTML.includes(deleteButton.innerHTML)) {
+                        ingredientLI.appendChild(deleteButton)
+                    } 
+                    
+                    ingredientLI.addEventListener('mouseleave', event => {
+                        // completeButton.setAttribute('hidden', '')
+                        deleteButton.setAttribute('hidden', '')
+                        console.log('inside mouseleave')
+                    })
+                    ingredientLI.addEventListener('mouseenter', event => {
+                        // completeButton.removeAttribute('hidden')
+                        deleteButton.removeAttribute('hidden')
+                    })
+                    deleteButton.addEventListener('click', event => {
+                        console.log(event)
+                        let ul = event.target.parentElement.parentElement
+                        ul.removeChild(event.target.parentElement)
+                        fetch('http://localhost:3000/ingredientShopping/delete', {
+                            method: 'DELETE',
+                            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                            body: JSON.stringify({_id: addedIngredient._id})
+                        }).then(console.log('deletion success'))
+                    })
                 })
-                titleInput.value = '';
-                amountInput.value = '';
-            })
+            }) 
+        })
+
+               
+
             let shoppingListDiv = event.target.parentElement
             shoppingListDiv.appendChild(titleInput)
             shoppingListDiv.appendChild(amountInput)

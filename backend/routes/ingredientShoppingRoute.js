@@ -42,7 +42,6 @@ router.get('/ingredientsByShoppingList/:shoppingListID', async (req, res) => {
 });
 
 router.patch('/amount', async (req, res) => {
-    console.log(req.body)
     try {
         const ingredientAmountUpdate = await IngredientShopping.findOneAndUpdate({_id: req.body._id}, {$set: {amount: req.body.amount}});
         res.json(ingredientAmountUpdate)
@@ -53,7 +52,6 @@ router.patch('/amount', async (req, res) => {
 });
 
 router.patch('/complete', async (req, res) => {
-    console.log(req.body)
     try {
         const ingredientAmountUpdate = await IngredientShopping.findOneAndUpdate({_id: req.body._id}, {$set: {complete: req.body.complete}});
         res.json(ingredientAmountUpdate)
