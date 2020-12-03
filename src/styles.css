@@ -18,6 +18,8 @@ header-h1 {
 .header-h1-a {
     text-decoration: none;
     color: black;
+    padding-left: 20px;
+    color: whitesmoke;
 }
 .active {
     color: red;
@@ -72,6 +74,15 @@ header-h1 {
 .categories-list ul li:hover {
     cursor: pointer;
 }
+.category-select {
+    width: fit-content;
+    height: 30px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #592418;
+    color: white;
+    border: 1px solid #592418;
+}
 
 
 /****** Recipes List ********/
@@ -81,16 +92,22 @@ header-h1 {
 .recipe {
     width: 700px;
     margin-left: 15px;
-    margin-bottom: 10px;
-    background-color: burlywood;
+    margin-bottom: 20px;
+    background-color: #1c2624;
     padding: 15px;
+    border-radius: 10px;
 }
 .recipe-header {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
+}
+.recipe-header h2 {
+    color: white;
 }
 .recipe-header p {
-    color: royalblue;
+    color: #bf861b;
+    padding-top: 5px;
 }
 .recipe .description {
     margin-left: 10px;
@@ -99,9 +116,25 @@ header-h1 {
     display: flex;
     flex-direction: row;
 }
+.description {
+    color: white;
+    border: 1px solid white;
+    padding: 15px;
+    border-radius: 10px;
+}
+.li-list-ingredient {
+    margin: 5px 0;
+}
 .ingredient-list {
     margin-left: 10px;
     margin-top: 10px;
+    color: white;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 10px;
+}
+.ingredient-list h3 {
+    color: white;
 }
 .ingredient-list ul {
     list-style-type: none;
@@ -111,6 +144,76 @@ header-h1 {
     display: flex;
     flex-direction: row;
     padding-left: 10px;
+    margin: 7px 0;
+}
+.new-ingredient-title {
+    height: 20px;
+    border-radius: 5px;
+    padding: 5px;
+    color: #a64d2d;
+    border: 2px solid #a64d2d;
+    margin-right: 10px;
+}
+.new-ingredient-amount {
+    height: 20px;
+    border-radius: 5px;
+    padding: 5px;
+    color: #a64d2d;
+    border: 2px solid #a64d2d;
+    margin-right: 10px;
+}
+.add-new-ingredient-button {
+    height: 34px;
+    width: fit-content;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 1px 1px #1C2624;
+    background-color: #BF4124;
+    color: white;
+    border: 1px solid #BF4124;
+}
+.delete-ingredient-button {
+    margin: 0 15px;
+    width: 20px;
+    border-radius: 10px;
+    background-color: #a64d2d;
+    color: white;
+    border: 1px solid #a64d2d;
+}
+.delete-ingredient-button:hover {
+    background-color: red;
+}
+.show-ingredient-button {
+    height: 30px;
+    width: fit-content;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 1px 1px #1C2624;
+    background-color: #BF4124;
+    color: white;
+    border: 1px solid #BF4124;
+}
+.recipe-shopping-select {
+    width: fit-content;
+    height: 30px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #592418;
+    color: white;
+    border: 1px solid #592418;
+}
+.recipe-shopping-div {
+    margin: 15px 0 0 20px;
+}
+.recipe-shopping-button {
+    width: fit-content;
+    height: 30px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #BF4124;
+    color: white;
+    border: 1px solid #BF4124;
+    margin-left: 10px;
 }
 
 
@@ -150,3 +253,7 @@ header-h1 {
 .shopping-list h3 {
     text-align: center;
 }
+
+
+/****** ALL ********/
+

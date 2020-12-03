@@ -121,7 +121,9 @@ function addNewIngredient(recipesWithIngredients) {
             addNewIngredientButton.classList.add('add-new-ingredient-button')
             addNewIngredientButton.textContent = 'Add New Ingredient'
             ingredientTitle.setAttribute('type', 'text')
+            ingredientTitle.setAttribute('placeholder', 'Ingredient Name')
             ingredientAmount.setAttribute('type', 'number')
+            ingredientAmount.setAttribute('placeholder', '5')
 
             ingredientListDiv.appendChild(ingredientTitle)
             ingredientListDiv.appendChild(ingredientAmount)
