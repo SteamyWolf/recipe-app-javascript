@@ -12,6 +12,7 @@ async function addShoppingList() {
     .then(list => {
         console.log(list)
         displayShoppingLists(list)
+        deleteShoppingList('new')
     })
 }
 
@@ -40,7 +41,7 @@ getShoppingLists().then(async shoppingLists => {
     Promise.all(shoppingListsWithIngredients).then(values => {
         displayShoppingLists(values)
         addIngredient(values)
-        deleteShoppingList()
+        deleteShoppingList('old')
     })
 })
 
@@ -75,9 +76,11 @@ function displayShoppingLists(shoppingListsWithIngredients) {
             if (list.ingredients[0] !== undefined) {
                 list.ingredients[0].forEach(ingredient => {
                     let listIngredient = document.createElement('li')
+                    listIngredient.classList.add('list-ingredient-element')
                     let pTitle = document.createElement('p')
                     pTitle.textContent = ingredient.name
                     let dashText = document.createElement('p')
+                    dashText.classList.add('dash-text')
                     dashText.textContent = ' - '
                     let pAmount = document.createElement('p')
                     pAmount.textContent = ingredient.amount
@@ -94,7 +97,9 @@ function displayShoppingLists(shoppingListsWithIngredients) {
                         pTitle.style.textDecoration = 'line-through'
                         pAmount.style.textDecoration = 'line-through'
                     }
+
                     let completeButton = document.createElement('button')
+                    completeButton.classList.add('complete-button')
                     completeButton.textContent = 'Complete'
                     completeButton.setAttribute('hidden', '')
                     completeButton.addEventListener('click', event => {
@@ -107,7 +112,8 @@ function displayShoppingLists(shoppingListsWithIngredients) {
                         })
                     })
                     let deleteButton = document.createElement('button')
-                    deleteButton.textContent = 'Delete'
+                    deleteButton.classList.add('delete-ingredient-from-shopping-list')
+                    deleteButton.textContent = 'X'
                     deleteButton.setAttribute('hidden', '')
 
                     listIngredient.addEventListener('mouseleave', event => {
@@ -144,7 +150,7 @@ function displayShoppingLists(shoppingListsWithIngredients) {
         })
     } else {
         let shoppingListDiv = document.createElement('div');
-            shoppingListDiv.classList.add('shopping-list')
+            shoppingListDiv.classList.add('shopping-list-new')
     
             let h3 = document.createElement('h3')
             h3.classList.add('shopping-list-title')
@@ -160,23 +166,30 @@ function displayShoppingLists(shoppingListsWithIngredients) {
             let ul = document.createElement('ul')
             ul.classList.add('shopping-list-ingredient-list')
             let button = document.createElement('button')
-            button.classList.add('add-ingredient-button')
+            button.classList.add('second-add-ingredient-button')
             button.textContent = 'Add Ingredient'
+
             let pHidden = document.createElement('p')
             pHidden.setAttribute('hidden', '')
             pHidden.textContent = shoppingListsWithIngredients._id
-    
+
             shoppingListDiv.appendChild(h3)
             shoppingListDiv.appendChild(ul)
             shoppingListDiv.appendChild(button)
             shoppingListDiv.appendChild(pHidden)
             allShoppingLists.appendChild(shoppingListDiv)
+
+            addIngredient('added-new-list')
         }
-        addIngredient(shoppingListsWithIngredients)
+        
 }
 
 function addIngredient(shoppingListsWithIngredients) {
-    const allAddIngBtn = document.querySelectorAll('.add-ingredient-button');
+    let allAddIngBtn = document.querySelectorAll('.add-ingredient-button');
+    if (shoppingListsWithIngredients === 'added-new-list') {
+        allAddIngBtn = document.querySelectorAll('.second-add-ingredient-button')
+    }
+    console.log(allAddIngBtn)
     allAddIngBtn.forEach(ingBtn => {
         ingBtn.addEventListener('click', event => {
             console.log(event)
@@ -186,15 +199,16 @@ function addIngredient(shoppingListsWithIngredients) {
             let amountInput = document.createElement('input')
             amountInput.setAttribute('type', 'number')
             let addButton = document.createElement('button')
+            addButton.classList.add('add-ingredient-button-real')
             addButton.textContent = 'Add'
             addButton.addEventListener('click', event => {
-                console.log(event)
                 let shoppingDiv = event.target.parentElement.children[1]
                 let li = document.createElement('li')
                 li.textContent = `${titleInput.value} - ${amountInput.value}`
                 shoppingDiv.appendChild(li)
                 let id = event.target.parentElement.children[3].innerHTML
                 console.log(id)
+                
                 fetch('http://localhost:3000/ingredientShopping', {
                     method: 'POST',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
@@ -239,9 +253,6 @@ function addIngredient(shoppingListsWithIngredients) {
                 })
             }) 
         })
-
-               
-
             let shoppingListDiv = event.target.parentElement
             shoppingListDiv.appendChild(titleInput)
             shoppingListDiv.appendChild(amountInput)
@@ -250,15 +261,20 @@ function addIngredient(shoppingListsWithIngredients) {
     })
 }
 
-function deleteShoppingList() {
-    const shoppingListAll = document.querySelectorAll('.shopping-list')
+function deleteShoppingList(age) {
+    let shoppingListAll;
+    if (age === 'old') {
+        shoppingListAll = document.querySelectorAll('.shopping-list')
+    }
+    if (age === 'new') {
+        shoppingListAll = document.querySelectorAll('.shopping-list-new')
+    }
     shoppingListAll.forEach(shoppingList => {
         let hoverButton = document.createElement('button')
-        hoverButton.textContent = 'X'
+        hoverButton.textContent = 'Delete Shopping List'
         hoverButton.classList.add('hover-delete-button')
         hoverButton.setAttribute('hidden', '');
         hoverButton.addEventListener('click', event => {
-            console.log(event)
             let id = event.target.parentElement.children[3].innerHTML
             event.target.parentElement.parentElement.removeChild(event.target.parentElement)
             fetch('http://localhost:3000/shopping/delete', {
@@ -269,7 +285,6 @@ function deleteShoppingList() {
         })
         shoppingList.appendChild(hoverButton)
         shoppingList.addEventListener('mouseenter', event => {
-            console.log(event)
             // event.target.parentElement.removeChild(event.target) //will remove... works!
             hoverButton.removeAttribute('hidden')
         })

@@ -81,6 +81,7 @@ function addNewCategory(recipesWithIngredients) {
     let categoryInput = document.querySelector('.new-category-input');
     const addCategoryDiv = document.querySelector('.add-category-div')
     const button = document.createElement('button')
+    button.classList.add('add-category-button')
     button.textContent = 'Add'
     categoryInput.addEventListener('focus', event => {
         categoryInput.value = '';
@@ -151,7 +152,7 @@ function addNewIngredient(recipesWithIngredients) {
                             ingredientID: savedIngredient._id
                         }
                         addNewIngredientToDOM(ingredient, liListIngredient)
-                        // location.reload()
+                        deleteIngredient() //TODO: PASS A PARAMETER TO CHECK IN THE FUNCTION TO ADD A NEW DELETE BUTTON OR NOT
                     })
                 }
             })
