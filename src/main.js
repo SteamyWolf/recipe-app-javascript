@@ -19,55 +19,60 @@ async function getRecipes() {
     return recipes
 }
 
-
-getRecipes().then(async recipes => {
-    console.log(recipes)
-    
-    let recipesWithIngredients = await recipes.map(recipe => {
-        fetch(`http://localhost:3000/ingredients/ingredientsByRecipe/${recipe._id}`, {
-            method: 'GET',
-            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+function recall(command) {
+    getRecipes().then(async recipes => {
+        console.log(recipes)
+        
+        let recipesWithIngredients = await recipes.map(recipe => {
+            fetch(`http://localhost:3000/ingredients/ingredientsByRecipe/${recipe._id}`, {
+                method: 'GET',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+            })
+            .then(response => response.json())
+            .then(ingredients => {
+                recipe.ingredients.push(ingredients)
+            })
+            return recipe
         })
-        .then(response => response.json())
-        .then(ingredients => {
-            recipe.ingredients.push(ingredients)
-        })
-        return recipe
+        console.log(recipesWithIngredients)
+        displayCategories(recipesWithIngredients, command)
+        allRecipesClick(recipesWithIngredients)
+        addNewCategory(recipesWithIngredients);
     })
-    console.log(recipesWithIngredients)
-    displayCategories(recipesWithIngredients)
-    allRecipesClick(recipesWithIngredients)
-    addNewCategory(recipesWithIngredients);
-})
+}
+recall('initialization')
 
 let categoryArray = [];
 let globalDBCategory;
 
-function displayCategories(recipesWithIngredients) {
-    let categories = new Set(recipesWithIngredients.map(recipe => recipe.category))
-    console.log(categories)
-    categories.forEach(category => {
-        categoryArray.push(category)
-        ulOfCategories.appendChild(createCategory(category))
-    });
-    fetch('http://localhost:3000/categories', {
-        method: 'GET',
-        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(categories => {
-        console.log(categoryArray)
+function displayCategories(recipesWithIngredients, command) {
+    if (command === 'initialization') {
+        let categories = new Set(recipesWithIngredients.map(recipe => recipe.category))
         console.log(categories)
-        let DBCategory = []
-        categories.forEach(category => DBCategory.push(category.category))
-        console.log(DBCategory)
-        globalDBCategory = DBCategory
-        let differences = DBCategory.filter(category => !categoryArray.includes(category))
-        console.log(differences)
-        differences.forEach(filteredCategory => ulOfCategories.appendChild(createCategory(filteredCategory)))
-        categoryClick(recipesWithIngredients);
-    })
-    
+        categories.forEach(category => {
+            categoryArray.push(category)
+            ulOfCategories.appendChild(createCategory(category))
+        });
+        fetch('http://localhost:3000/categories', {
+            method: 'GET',
+            headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(categories => {
+            console.log(categoryArray)
+            console.log(categories)
+            let DBCategory = []
+            categories.forEach(category => DBCategory.push(category.category))
+            console.log(DBCategory)
+            globalDBCategory = DBCategory
+            let differences = DBCategory.filter(category => !categoryArray.includes(category))
+            console.log(differences)
+            differences.forEach(filteredCategory => ulOfCategories.appendChild(createCategory(filteredCategory)))
+            categoryClick(recipesWithIngredients);
+        })
+    } else {
+        categoryClick(recipesWithIngredients)
+    }
 }
 function createCategory(category) {
     let li = document.createElement('li')
@@ -402,6 +407,44 @@ function deleteIngredient() {
     })
 }
 
+function deleteRecipe(recipesWithIngredients) {
+    const deleteRecipeButtonAll = document.querySelectorAll('.delete-recipe-button')
+    deleteRecipeButtonAll.forEach(deleteButton => {
+        deleteButton.addEventListener('click', event => {
+            console.log(event)
+            let recipeParent = event.target.parentElement.parentElement
+            let recipe = event.target.parentElement
+            let id = event.target.parentElement.children[3].innerHTML
+            console.log(id)
+            let ingredientList = Array.from(event.target.parentElement.children[2].children[1].children)
+            console.log(ingredientList)
+            ingredientsToDelete = [];
+            ingredientList.forEach(li => {
+                ingredientsToDelete.push(li.children[3].innerHTML)
+            })
+            recipeParent.removeChild(recipe);
+            fetch('http://localhost:3000/recipes/delete', {
+                method: 'DELETE',
+                headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                body: JSON.stringify({_id: id})
+            }).then(deletedRecipe => {
+                console.log(deletedRecipe, '<= deleted this')
+                ingredientsToDelete.forEach(id => {
+                    fetch('http://localhost:3000/ingredients/delete', {
+                        method: 'DELETE',
+                        headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({_id: id})
+                    }).then(response => {
+                        console.log(response)
+                        // location.reload()
+                        recall()
+                    })
+                })
+            })
+        })
+    })
+}
+
 
 function displayRecipes(recipesWithIngredients, categoryName) {
     while (recipeListDiv.firstChild) {
@@ -419,6 +462,7 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         changeCategorySelect()
         deleteIngredient()
         sendToShoppingListSelect()
+        deleteRecipe(recipesWithIngredients)
         
     }
     
@@ -431,6 +475,7 @@ function displayRecipes(recipesWithIngredients, categoryName) {
         addNewIngredient(recipesWithIngredients)
         changeCategorySelect()
         deleteIngredient()
+        deleteRecipe(recipesWithIngredients)
         // sendToShoppingListSelect()
     }
 }
@@ -557,6 +602,12 @@ function createRecipe(recipe) {
     shoppingDiv.appendChild(shoppingSelect)
     shoppingDiv.appendChild(shoppingButton)
     recipeDiv.appendChild(shoppingDiv)
+
+    //delete button for recipes
+    let deleteRecipeButton = document.createElement('button')
+    deleteRecipeButton.textContent = 'Delete Recipe and its Ingredients';
+    deleteRecipeButton.classList.add('delete-recipe-button')
+    recipeDiv.appendChild(deleteRecipeButton)
     
     //last append to main div
     recipeListDiv.appendChild(recipeDiv)
