@@ -62,6 +62,7 @@ router.get('/ingredientsByRecipe/:recipeID', async (req, res) => {
 });
 
 router.delete('/delete', async (req, res) => {
+    console.log(req.body, 'ingredient')
     try {
         let deletedIngredient = await Ingredient.findOneAndDelete({_id: req.body._id});
         res.json(deletedIngredient);

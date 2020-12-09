@@ -4,6 +4,7 @@ const ulIngredients = document.querySelector('.ingredient-add');
 const addIngredientButton = document.querySelector('.add-ingredient-button');
 const submitButton = document.querySelector('.submit-button');
 const form = document.querySelector('.form');
+const userMessage = document.querySelector('.user-message')
 
 async function getCategories() {
     const response = await fetch('http://localhost:3000/categories', {
@@ -82,6 +83,8 @@ function grabFormData(event) {
         .then(response => response.json())
         .then(recipe => {
             console.log(recipe)
+            title.value = '';
+            directions.value = '';
             let id = recipe._id
             let allLi = ulIngredients.getElementsByTagName('li')
             console.log(allLi)
@@ -94,8 +97,19 @@ function grabFormData(event) {
                     method: 'POST',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: name, amount: amount, recipeID: id })
+                }).then(response => {
+                    console.log(response)
+                    console.log(name)
+                    name.value = '';
+                    amount.value = null; 
+                    if (response.status === 200) {
+                        userMessage.innerHTML = 'Recipe was successfully added to the database!'
+                        setTimeout(() => {
+                            userMessage.innerHTML = '';
+                        }, 5000)
+                    }
                 })
-            }
-        } 
+            } 
+        }
      })
 }

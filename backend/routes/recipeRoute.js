@@ -74,6 +74,16 @@ router.patch('/category', async (req, res) => {
     catch(error) {
         console.log(error);
     }
+});
+
+router.delete('/delete', async (req,res) => {
+    console.log(req.body, 'recipe')
+    try {
+        const recipeDelete = await Recipe.findOneAndDelete({_id: req.body._id})
+        res.json(recipeDelete)
+    } catch (err) {
+        console.log(err)
+    }
 })
 
 //EXPORT
