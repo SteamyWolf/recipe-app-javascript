@@ -10,13 +10,13 @@ const categoryRoute = require('./backend/routes/categoryRoute');
 const shoppingListRoute = require('./backend/routes/shoppingListRoute');
 const ingredientShoppingRoute = require('./backend/routes/ingredientShoppingRoute');
 
-// var corsOptions = {
-//     origin: 'http://localhost:3000',
-//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 const port = process.env.PORT || 3000
-app.use(cors());
+app.use(cors(corsOptions));
 
 //Middleware//
 app.use(express.urlencoded({ extended: true }));
