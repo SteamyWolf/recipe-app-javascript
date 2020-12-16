@@ -11,7 +11,7 @@ recipeFormLink.addEventListener('click', event => {
 })
 
 async function getRecipes() {
-    const response = await fetch('http://localhost:3000/recipes', {
+    const response = await fetch('https://recipe-app-wyatt.herokuapp.com/recipes', {
         method: 'GET',
         headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
     });
@@ -24,7 +24,7 @@ function recall(command) {
         console.log(recipes)
         
         let recipesWithIngredients = await recipes.map(recipe => {
-            fetch(`http://localhost:3000/ingredients/ingredientsByRecipe/${recipe._id}`, {
+            fetch(`https://recipe-app-wyatt.herokuapp.com/ingredients/ingredientsByRecipe/${recipe._id}`, {
                 method: 'GET',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
             })
@@ -53,7 +53,7 @@ function displayCategories(recipesWithIngredients, command) {
             categoryArray.push(category)
             ulOfCategories.appendChild(createCategory(category))
         });
-        fetch('http://localhost:3000/categories', {
+        fetch('https://recipe-app-wyatt.herokuapp.com/categories', {
             method: 'GET',
             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' }
         })
@@ -98,7 +98,7 @@ function addNewCategory(recipesWithIngredients) {
         // displayCategories(recipesWithIngredients)
         globalDBCategory.push(categoryInput.value)
         ulOfCategories.appendChild(createCategory(categoryInput.value))
-        fetch('http://localhost:3000/categories', {
+        fetch('https://recipe-app-wyatt.herokuapp.com/categories', {
             method: 'POST',
             headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
             body: JSON.stringify({category: categoryInput.value})
@@ -142,7 +142,7 @@ function addNewIngredient(recipesWithIngredients) {
                 let liListIngredient = event.target.parentElement.children[1]
                 if (ingredientTitle.value && ingredientAmount.value) {
                     console.log(ingredientTitle.value, ingredientAmount.value)
-                    fetch('http://localhost:3000/ingredients', {
+                    fetch('https://recipe-app-wyatt.herokuapp.com/ingredients', {
                         method: 'POST',
                         headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                         body: JSON.stringify({name: ingredientTitle.value, amount: ingredientAmount.value, recipeID: id})
@@ -227,7 +227,7 @@ function editRecipes(newIngredientID) {
             if (event.target === indexOfTitle) {
                 if (fieldText.length === 0) {fieldText = 'Click to edit me'}
                 const id = event.target.parentElement.parentElement.children[3].innerHTML
-                fetch('http://localhost:3000/recipes/title', {
+                fetch('https://recipe-app-wyatt.herokuapp.com/recipes/title', {
                     method: 'PATCH',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({_id: id, title: fieldText})
@@ -237,7 +237,7 @@ function editRecipes(newIngredientID) {
                 const id = event.target.parentElement.parentElement.parentElement.children[3].innerHTML
                 let ratingNumber = +fieldText
                 //TODO: Fix this so that the user can only edit the number. It will probably be in the createRecipe function
-                fetch('http://localhost:3000/recipes/rating', {
+                fetch('https://recipe-app-wyatt.herokuapp.com/recipes/rating', {
                     method: 'PATCH',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({_id: id, rating: ratingNumber})
@@ -255,7 +255,7 @@ function editRecipes(newIngredientID) {
             const id = event.target.parentElement.children[3].innerHTML;
             console.log(id, descriptionText)
             if (descriptionText.length === 0) {descriptionText = 'Click to edit me'}
-            fetch('http://localhost:3000/recipes/directions', {
+            fetch('https://recipe-app-wyatt.herokuapp.com/recipes/directions', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: id, description: descriptionText})
@@ -277,7 +277,7 @@ function editRecipes(newIngredientID) {
             }
             const ingredientTitleText = event.target.innerHTML
             if (ingredientTitleText.length === 0) {ingredientTitleText = 'Click to edit me'}
-            fetch('http://localhost:3000/ingredients/name', {
+            fetch('https://recipe-app-wyatt.herokuapp.com/ingredients/name', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: ingredientID, name: ingredientTitleText})
@@ -299,7 +299,7 @@ function editRecipes(newIngredientID) {
             if (parseInt(ingredientAmountNumber) < 0 || ingredientAmountNumber.length === 0) {
                 ingredientAmountNumber = 0;
             }
-            fetch('http://localhost:3000/ingredients/amount', {
+            fetch('https://recipe-app-wyatt.herokuapp.com/ingredients/amount', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: ingredientID, amount: +ingredientAmountNumber})
@@ -316,7 +316,7 @@ function changeCategorySelect() {
             console.log(event)
             let category = event.target.value
             let id = event.target.parentElement.parentElement.parentElement.children[3].innerHTML
-            fetch('http://localhost:3000/recipes/category', {
+            fetch('https://recipe-app-wyatt.herokuapp.com/recipes/category', {
                 method: 'PATCH',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: id, category: category})
@@ -326,7 +326,7 @@ function changeCategorySelect() {
 }
 
 async function sendToShoppingListSelect() {
-    const response = await fetch('http://localhost:3000/shopping', {
+    const response = await fetch('https://recipe-app-wyatt.herokuapp.com/shopping', {
         method: 'GET',
         headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
     })
@@ -367,7 +367,7 @@ async function sendToShoppingListSelect() {
                 ingredientsLiArray.forEach(ingLI => {
                     let name = ingLI.children[0].innerHTML
                     let amount = ingLI.children[2].innerHTML
-                    fetch('http://localhost:3000/ingredientShopping', {
+                    fetch('https://recipe-app-wyatt.herokuapp.com/ingredientShopping', {
                         method: 'POST',
                         headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                         body: JSON.stringify({name: name, amount: +amount, shoppingListID: shoppingListId})
@@ -398,7 +398,7 @@ function deleteIngredient() {
             let parentElement = event.target.parentElement.parentElement
             let childElement = event.target.parentElement
             parentElement.removeChild(childElement)
-            fetch('http://localhost:3000/ingredients/delete', {
+            fetch('https://recipe-app-wyatt.herokuapp.com/ingredients/delete', {
                 method: 'DELETE',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: id})
@@ -423,14 +423,14 @@ function deleteRecipe(recipesWithIngredients) {
                 ingredientsToDelete.push(li.children[3].innerHTML)
             })
             recipeParent.removeChild(recipe);
-            fetch('http://localhost:3000/recipes/delete', {
+            fetch('https://recipe-app-wyatt.herokuapp.com/recipes/delete', {
                 method: 'DELETE',
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: id})
             }).then(deletedRecipe => {
                 console.log(deletedRecipe, '<= deleted this')
                 ingredientsToDelete.forEach(id => {
-                    fetch('http://localhost:3000/ingredients/delete', {
+                    fetch('https://recipe-app-wyatt.herokuapp.com/ingredients/delete', {
                         method: 'DELETE',
                         headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                         body: JSON.stringify({_id: id})

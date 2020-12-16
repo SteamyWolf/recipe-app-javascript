@@ -7,7 +7,7 @@ const form = document.querySelector('.form');
 const userMessage = document.querySelector('.user-message')
 
 async function getCategories() {
-    const response = await fetch('http://localhost:3000/categories', {
+    const response = await fetch('https://recipe-app-wyatt.herokuapp.com/categories', {
         method: 'GET',
         headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' }
     })
@@ -75,7 +75,7 @@ function grabFormData(event) {
     let directions = document.querySelector('#directions').value
     let rating = document.querySelector('#rating').value
     let category = document.querySelector('#category').value
-    fetch('http://localhost:3000/recipes', {
+    fetch('https://recipe-app-wyatt.herokuapp.com/recipes', {
         method: 'POST',
         headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: title, directions: directions, rating: +rating, category: category })
@@ -93,7 +93,7 @@ function grabFormData(event) {
                     console.log(li)
                     let name = document.querySelector('#name').value
                     let amount = document.querySelector('#amount').value
-                    fetch('http://localhost:3000/ingredients', {
+                    fetch('https://recipe-app-wyatt.herokuapp.com/ingredients', {
                     method: 'POST',
                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name: name, amount: amount, recipeID: id })
