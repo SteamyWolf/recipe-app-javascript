@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        res.json(err)
     }
 });
 
@@ -23,6 +24,7 @@ router.post('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        res.json(err)
     }
 });
 

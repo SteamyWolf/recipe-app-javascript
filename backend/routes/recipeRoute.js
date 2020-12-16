@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        res.json(err)
     }
 });
 
@@ -29,6 +30,7 @@ router.post('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        res.json(err)
     }
 });
 
@@ -40,6 +42,7 @@ router.patch('/title', async (req, res) => {
     }
     catch(error) {
         console.log(error);
+        res.json(error)
     }
 });
 
@@ -51,6 +54,7 @@ router.patch('/rating', async (req, res) => {
     }
     catch(error) {
         console.log(error);
+        res.json(error)
     }
 })
 
@@ -62,6 +66,7 @@ router.patch('/directions', async (req, res) => {
     }
     catch(error) {
         console.log(error);
+        res.json(error)
     }
 })
 
@@ -73,6 +78,7 @@ router.patch('/category', async (req, res) => {
     }
     catch(error) {
         console.log(error);
+        res.json(error)
     }
 });
 
@@ -83,6 +89,7 @@ router.delete('/delete', async (req,res) => {
         res.json(recipeDelete)
     } catch (err) {
         console.log(err)
+        res.json(err)
     }
 })
 

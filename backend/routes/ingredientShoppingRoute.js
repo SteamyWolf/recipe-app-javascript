@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        res.json(err)
     }
 });
 
@@ -26,6 +27,7 @@ router.post('/', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        res.json(err)
     }
 });
 
@@ -38,6 +40,7 @@ router.get('/ingredientsByShoppingList/:shoppingListID', async (req, res) => {
     }
     catch (err) {
         res.json(err)
+        res.json(err)
     }
 });
 
@@ -48,6 +51,7 @@ router.patch('/amount', async (req, res) => {
     }
     catch(error) {
         console.log(error);
+        res.json(error)
     }
 });
 
@@ -58,6 +62,7 @@ router.patch('/complete', async (req, res) => {
     }
     catch(error) {
         console.log(error);
+        res.json(error)
     }
 });
 
@@ -68,6 +73,7 @@ router.delete('/delete', async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        res.json(err)
     }
 })
 
