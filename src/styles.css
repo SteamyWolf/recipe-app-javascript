@@ -320,6 +320,19 @@ header-h1 {
     color: white;
 }
 
+.new-list-delete-button {
+    background-color: #592418;
+    color: white;
+    margin-left: 8px;
+    border-radius: 10px;
+    width: 23px;
+    height: 23px;
+}
+.new-list-delete-button:hover {
+    background-color: red;
+    color: white;
+}
+
 .complete-button {
     color: white;
     background-color: #bf861b;

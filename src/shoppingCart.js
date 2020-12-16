@@ -206,18 +206,20 @@ function addIngredient(shoppingListsWithIngredients) {
                             completeButton.textContent = 'Complete'
                             completeButton.setAttribute('hidden', '')
                             completeButton.addEventListener('click', event => {
+                                console.log(event)
                                 titleInput.style.textDecoration = 'line-through'
                                 amountInput.style.textDecoration = 'line-through'
                                 fetch('http://localhost:3000/ingredientShopping/complete', {
                                     method: 'PATCH',
                                     headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ _id: ingredient._id, complete: true })
+                                    body: JSON.stringify({ _id: addedIngredient._id, complete: true })
                                 })
                             })
 
                             
                             let deleteButton = document.createElement('button')
-                            deleteButton.textContent = 'Delete'
+                            deleteButton.classList.add('new-list-delete-button')
+                            deleteButton.textContent = 'X'
                             deleteButton.setAttribute('hidden', '')
 
                             
