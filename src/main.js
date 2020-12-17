@@ -321,6 +321,8 @@ function changeCategorySelect() {
                 headers: { 'Access-Control-Allow-Orgin': 'Content-Type', 'Content-Type': 'application/json' },
                 body: JSON.stringify({_id: id, category: category})
             })
+            console.log('made it here')
+            recall()
         })
     })
 }
@@ -599,8 +601,12 @@ function createRecipe(recipe) {
     shoppingButton.textContent = 'Send Ingredients to Shopping List'
     let shoppingSelect = document.createElement('select')
     shoppingSelect.classList.add('recipe-shopping-select')
+    let success_message = document.createElement('p')
+    success_message.setAttribute('hidden', '')
+    success_message.textContent = 'Successfully added to shopping list';
     shoppingDiv.appendChild(shoppingSelect)
     shoppingDiv.appendChild(shoppingButton)
+    shoppingDiv.appendChild(success_message)
     recipeDiv.appendChild(shoppingDiv)
 
     //delete button for recipes
